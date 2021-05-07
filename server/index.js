@@ -22,8 +22,8 @@ async function getStats(){
     const name = osInfo.hostname;
     const cpu = currentLoad.currentLoad;
     const ram = mem.used / 1000 / 1000 / 1000;
-    const upload = networkStats[0].tx_sec / 1000 / 1000;
-    const download = networkStats[0].rx_sec / 1000 / 1000;
+    const upload = networkStats[0].tx_sec * 8 / 1000 / 1000;
+    const download = networkStats[0].rx_sec * 8 / 1000 / 1000;
 
     stats.name = name;
     cpu.toFixed(2) ? stats.cpu = cpu.toFixed(2) : stats.cpu = cpu || 0;
