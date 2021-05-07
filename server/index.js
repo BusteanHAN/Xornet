@@ -26,10 +26,10 @@ async function getStats(){
     const download = networkStats[0].rx_sec / 1000 / 1000;
 
     stats.name = name;
-    cpu.toFixed(2) ? stats.cpu = cpu.toFixed(2) : stats.cpu = cpu || 0 
-    ram.toFixed(2) ? stats.ram = ram.toFixed(2) : stats.ram = ram || 0 
-    upload.toFixed(2) ? stats.upload = upload.toFixed(2) : stats.upload = upload || 0 
-    download.toFixed(2) ? stats.download = download.toFixed(2) : stats.download = download || 0 
+    cpu.toFixed(2) ? stats.cpu = cpu.toFixed(2) : stats.cpu = cpu || 0;
+    ram.toFixed(2) ? stats.ram = ram.toFixed(2) : stats.ram = ram || 0;
+    upload.toFixed(2) ? stats.upload = upload.toFixed(2) : stats.upload = upload || 0;
+    download.toFixed(2) ? stats.download = download.toFixed(2) : stats.download = download || 0;
 
     return stats;
 }
