@@ -4,16 +4,20 @@ const io = require("socket.io-client");
 async function getStats(){
     let stats = {};
 
-    const osInfo = await si.osInfo();
-    const currentLoad = await si.currentLoad();
-    const mem = await si.mem();
-    const networkStats = await si.networkStats();
+    valueObject = {
+        currentLoad: 'currentLoad',
+        osInfo: 'hostname',
+        mem: 'used',
+        networkStats: 'tx_sec, rx_sec'
+    }
 
-    const name = osInfo.hostname;
-    const cpu = currentLoad.currentLoad;
-    const ram = mem.used / 1000 / 1000 / 1000;
-    const upload = networkStats[0].tx_sec * 8 / 1000 / 1000;
-    const download = networkStats[0].rx_sec * 8 / 1000 / 1000;
+    const data = await si.get(valueObject);
+
+    const name = data.osInfo.hostname;
+    const cpu = data.currentLoad.currentLoad;
+    const ram = data.mem.used / 1000 / 1000 / 1000;
+    const upload = data.networkStats[0].tx_sec * 8 / 1000 / 1000;
+    const download = data.networkStats[0].rx_sec * 8 / 1000 / 1000;
 
     stats.name = name;
     cpu.toFixed(2) ? stats.cpu = cpu.toFixed(2) : stats.cpu = cpu || 0;
@@ -40,4 +44,4 @@ socket.on('connect', async () => {
     setInterval(() => {
         socket.emit('report', statistics)
     }, 1000);
-})
+});
