@@ -28,13 +28,12 @@ io.on("connection", async socket => {
             report.ram.free = parseFloat((report.ram.free / 1024 / 1024 / 1024).toFixed(2))
 
             report.cpu = parseFloat(report.cpu.toFixed(2));
-
+ 
             report.network.tx_sec = parseFloat((report.network.tx_sec * 8 / 1024 / 1024).toFixed(2));
             report.network.rx_sec = parseFloat((report.network.rx_sec * 8 / 1024 / 1024).toFixed(2));
 
             vms.set(report.name, report);
-        }
-        console.log(vms);
+        } 
     }); 
 
     setInterval(async () => {

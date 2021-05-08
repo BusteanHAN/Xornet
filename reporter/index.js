@@ -1,6 +1,16 @@
 const si = require('systeminformation');
 const io = require("socket.io-client");
 const os = require('os');
+const version = '0.04';
+const logo = [
+    '    __  __      _____ \n',
+    '\\_//  \\|__)|\\ ||_  |  \n',
+    `/ \\\\__/| \\ | \\||__ |  ${version}`,
+]
+const backend = "ws://backend.xornet.cloud";
+const socket = io.connect(backend, { reconnect: true });
+
+console.log(logo.join(""));
 
 async function getStats(){
 
@@ -28,16 +38,19 @@ let statistics = {};
 
 setInterval(async () => {
     statistics = await getStats();
-    console.log("Sending Statistics");
+    // console.log("Sending Statistics");
 }, 1000);
 
-const socket = io.connect("ws://backend.xornet.cloud", {
-  reconnect: true,
-});
+var emitter = null;
 
 socket.once('connect', async () => {
-    console.log("connected");
-    setInterval(() => {
+    console.log(`Connected to ${backend}`);
+    emitter = setInterval(function() {
         socket.emit('report', statistics)
     }, 1000);
+});
+
+socket.once('disconnect', async () => {
+    console.log(`Disconnected from ${backend}`);
+    clearInterval(emitter);
 });
