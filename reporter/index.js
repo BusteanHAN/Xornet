@@ -35,7 +35,7 @@ const socket = io.connect("ws://backend.xornet.cloud", {
   reconnect: true,
 });
 
-socket.on('connect', async () => {
+socket.once('connect', async () => {
     console.log("connected");
     setInterval(() => {
         socket.emit('report', statistics)
