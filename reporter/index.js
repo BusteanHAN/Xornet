@@ -15,7 +15,7 @@ console.log(logo.join(""));
 async function getStats(){
 
     valueObject = {
-        networkStats: 'tx_sec, rx_sec',
+        networkStats: `(*) tx_sec, rx_sec`,
         currentLoad: 'currentLoad',
     }
 
@@ -28,9 +28,9 @@ async function getStats(){
             free: os.freemem(),
         },
         cpu: data.currentLoad.currentLoad,
-        network: data.networkStats[0],
-    };
- 
+        network: data.networkStats,
+    }; 
+    
     return stats;
 }  
 
@@ -53,4 +53,4 @@ socket.once('connect', async () => {
 socket.once('disconnect', async () => {
     console.log(`Disconnected from ${backend}`);
     clearInterval(emitter);
-});
+});  

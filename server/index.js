@@ -23,16 +23,35 @@ io.on("connection", async socket => {
     socket.on('report', async report => {
         if (report.name){
             
+            // Parse RAM usage & determine used
             report.ram.used = parseFloat(((report.ram.total - report.ram.free)  / 1024 / 1024 / 1024).toFixed(2))
             report.ram.total = parseFloat((report.ram.total / 1024 / 1024 / 1024).toFixed(2))
             report.ram.free = parseFloat((report.ram.free / 1024 / 1024 / 1024).toFixed(2))
 
+            // Parse CPU usage
             report.cpu = parseFloat(report.cpu.toFixed(2));
  
-            report.network.tx_sec = parseFloat((report.network.tx_sec * 8 / 1024 / 1024).toFixed(2));
-            report.network.rx_sec = parseFloat((report.network.rx_sec * 8 / 1024 / 1024).toFixed(2));
+            if (Array.isArray(report.network)){
+                
+                // Clear out null interfaces
+                report.network = report.network.filter(iface => iface.tx_sec !== null && iface.rx_sec !== null);
 
-            vms.set(report.name, report);
+                // Get total network interfaces
+                totalInterfaces = report.network.length;
+
+                // Combine all bandwidth together
+                let tx_sec = report.network.reduce((a, b) => (a.tx_sec + b.tx_sec)) * 8 / 1000 / 1000;
+                let rx_sec = report.network.reduce((a, b) => (a.rx_sec + b.rx_sec)) * 8 / 1000 / 1000;
+
+                // Replace whats there with proper data
+                report.network = {
+                    totalInterfaces,
+                    tx_sec: parseFloat(tx_sec.toFixed(2)),
+                    rx_sec: parseFloat(rx_sec.toFixed(2))
+                }; 
+
+                vms.set(report.name, report); 
+            }
         } 
     }); 
 
