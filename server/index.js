@@ -6,14 +6,6 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http, {cors: { origin: "*" }});
 app.use(morgan("dev")); // Enable HTTP code logs
 
-app.get('/', (req, res) => {
-    res.json({message: 'fuck you'});
-});
-
-app.get('/vms', (req, res) => {
-    res.json({message: 'fuck you'});
-});
- 
 let vms = new Map();
 
 // Websockets

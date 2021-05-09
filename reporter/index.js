@@ -1,16 +1,20 @@
 const si = require('systeminformation');
 const io = require("socket.io-client");
 const os = require('os');
-const version = '0.04';
+const version = '0.05';
 const logo = [
     '    __  __      _____ \n',
     '\\_//  \\|__)|\\ ||_  |  \n',
     `/ \\\\__/| \\ | \\||__ |  ${version}`,
 ]
-const backend = "ws://backend.xornet.cloud";
-let socket = io.connect(backend, { reconnect: true });
-
 console.log(logo.join(""));
+
+
+const backend = "ws://backend.xornet.cloud";
+const name = os.hostname();
+const platform = os.platform();
+
+let socket = io.connect(backend, { reconnect: true });
 
 async function getStats(){
 
@@ -22,7 +26,8 @@ async function getStats(){
     const data = await si.get(valueObject);
 
     let stats = {
-        name: os.hostname(),
+        name,
+        platform,
         ram: {
             total: os.totalmem(), 
             free: os.freemem(),
