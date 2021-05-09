@@ -36,19 +36,21 @@ io.on("connection", async socket => {
                 // Clear out null interfaces
                 report.network = report.network.filter(iface => iface.tx_sec !== null && iface.rx_sec !== null);
 
-                // Get total network interfaces
+                // Get total network interfaces 
                 totalInterfaces = report.network.length;
-
+ 
+ 
                 // Combine all bandwidth together
-                let tx_sec = report.network.reduce((a, b) => (a.tx_sec + b.tx_sec)) * 8 / 1000 / 1000;
-                let rx_sec = report.network.reduce((a, b) => (a.rx_sec + b.rx_sec)) * 8 / 1000 / 1000;
+                let TxSec = report.network.reduce((a, b) => (a + b.tx_sec), 0) * 8 / 1000 / 1000;
+                let RxSec = report.network.reduce((a, b) => (a + b.rx_sec), 0) * 8 / 1000 / 1000;
 
-                // Replace whats there with proper data
-                report.network = {
+                // Replace whats there with proper data 
+                report.network = { 
                     totalInterfaces,
-                    tx_sec: parseFloat(tx_sec.toFixed(2)),
-                    rx_sec: parseFloat(rx_sec.toFixed(2))
+                    TxSec: parseFloat(TxSec.toFixed(2)),
+                    RxSec: parseFloat(RxSec.toFixed(2))
                 }; 
+
 
                 vms.set(report.name, report); 
             }

@@ -8,7 +8,7 @@ const logo = [
     `/ \\\\__/| \\ | \\||__ |  ${version}`,
 ]
 const backend = "ws://backend.xornet.cloud";
-const socket = io.connect(backend, { reconnect: true });
+let socket = io.connect(backend, { reconnect: true });
 
 console.log(logo.join(""));
 
@@ -26,31 +26,31 @@ async function getStats(){
         ram: {
             total: os.totalmem(), 
             free: os.freemem(),
-        },
+        }, 
         cpu: data.currentLoad.currentLoad,
         network: data.networkStats,
-    }; 
-    
-    return stats;
+    };   
+      
+    return stats; 
 }  
+ 
+let statistics = {}; 
 
-let statistics = {};
-
-setInterval(async () => {
+setInterval(async () => { 
     statistics = await getStats();
     // console.log("Sending Statistics");
 }, 1000);
 
 var emitter = null;
 
-socket.once('connect', async () => {
+socket.on('connect', async () => {
     console.log(`Connected to ${backend}`);
     emitter = setInterval(function() {
         socket.emit('report', statistics)
     }, 1000);
 });
 
-socket.once('disconnect', async () => {
+socket.on('disconnect', async () => {
     console.log(`Disconnected from ${backend}`);
     clearInterval(emitter);
-});  
+});
