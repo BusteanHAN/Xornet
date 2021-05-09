@@ -8,6 +8,11 @@ app.use(morgan("dev")); // Enable HTTP code logs
 
 let vms = new Map();
 
+const latestVersion = 0.06;
+app.get("/updates", (req, res) => {
+    res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}.exe`});
+}); 
+
 // Websockets
 io.on("connection", async socket => {
     console.log('connection');
@@ -23,7 +28,7 @@ io.on("connection", async socket => {
             // Parse CPU usage
             report.cpu = parseFloat(report.cpu.toFixed(2));
  
-            if (Array.isArray(report.network)){
+            if (Array.isArray(report.network)){ 
                 
                 // Clear out null interfaces
                 report.network = report.network.filter(iface => iface.tx_sec !== null && iface.rx_sec !== null);
@@ -37,7 +42,7 @@ io.on("connection", async socket => {
                 let RxSec = report.network.reduce((a, b) => (a + b.rx_sec), 0) * 8 / 1000 / 1000;
 
                 // Replace whats there with proper data 
-                report.network = { 
+                report.network = {  
                     totalInterfaces,
                     TxSec: parseFloat(TxSec.toFixed(2)),
                     RxSec: parseFloat(RxSec.toFixed(2))
