@@ -85,6 +85,7 @@ async function connectToXornet(){
         valueObject = {
             networkStats: `(*) tx_sec, rx_sec`,
             currentLoad: 'currentLoad',
+            graphics: 'controllers'
         }
 
         const data = await si.get(valueObject);
@@ -97,6 +98,7 @@ async function connectToXornet(){
                 free: os.freemem(),
             }, 
             cpu: data.currentLoad.currentLoad,
+            gpu: data.graphics.controllers[0],
             network: data.networkStats,
             reporterVersion: version,
         };   

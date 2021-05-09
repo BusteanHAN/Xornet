@@ -26,7 +26,7 @@ io.on("connection", async socket => {
             report.ram.free = parseFloat((report.ram.free / 1024 / 1024 / 1024).toFixed(2))
 
             // Parse CPU usage
-            report.cpu = parseFloat(report.cpu.toFixed(2));
+            report.cpu = parseInt(report.cpu);
  
             if (Array.isArray(report.network)){ 
                 
@@ -41,14 +41,14 @@ io.on("connection", async socket => {
                 let TxSec = report.network.reduce((a, b) => (a + b.tx_sec), 0) * 8 / 1000 / 1000;
                 let RxSec = report.network.reduce((a, b) => (a + b.rx_sec), 0) * 8 / 1000 / 1000;
 
-                // Replace whats there with proper data 
+                // Replace whats there with proper data
                 report.network = {  
                     totalInterfaces,
                     TxSec: parseFloat(TxSec.toFixed(2)),
                     RxSec: parseFloat(RxSec.toFixed(2))
                 }; 
 
-
+                // console.log(report);
                 vms.set(report.name, report); 
             }
         } 
