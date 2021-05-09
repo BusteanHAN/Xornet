@@ -3,7 +3,6 @@ const io = require("socket.io-client");
 const axios  = require("axios");
 const os = require('os');
 const fs = require('fs');
-const path = require('path')  ;
 const ProgressBar = require('progress');
 require('path');
 
@@ -22,19 +21,22 @@ async function checkForUpdates(){
             console.log(`Downloading new update v${update.latestVersion}`);
             await downloadUpdate(update.downloadLink);
             console.log(`Download complete`);
-            await deleteOldVersion();
+            await deleteOldVersion(version);
             console.log(`Update finished`);
         } else { 
             connectToXornet(); 
-        }; 
+        };  
     } catch (error) {
-        console.log(`Backend server is offline, skipping update`);
-        console.log(`Waiting for backend to connect...`);
-        connectToXornet(); 
+        if (error) {
+            console.log(error);
+            console.log(`Backend server is offline, skipping update`);
+            console.log(`Waiting for backend to connect...`);
+            connectToXornet(); 
+        }
     }
 };
 async function downloadUpdate(downloadLink){
-    const downloadPath = path.resolve(__dirname, downloadLink.split('/')[downloadLink.split('/').length - 1]);
+    const downloadPath = (`./${downloadLink.split('/')[downloadLink.split('/').length - 1]}`);
     console.log(downloadPath);
     
     const writer = fs.createWriteStream(downloadPath)
@@ -63,9 +65,13 @@ async function downloadUpdate(downloadLink){
         writer.on('error', reject);
     });
 };
-async function deleteOldVersion(){
-    console.log(`Deleting old version ${__filename}`);
-    if (__filename.endsWith('.exe')) fs.unlink(__filename);
+async function deleteOldVersion(oldVersion){
+    return new Promise(resolve => {
+        fs.unlink(`xornet-reporter-v${oldVersion}`, () => {
+            console.log(`Deleted old version`);
+            resolve();
+        });
+    });
 };
 
 async function connectToXornet(){

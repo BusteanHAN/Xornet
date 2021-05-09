@@ -8,9 +8,9 @@ app.use(morgan("dev")); // Enable HTTP code logs
 
 let vms = new Map();
 
-const latestVersion = 0.06;
+const latestVersion = 0.07;
 app.get("/updates", (req, res) => {
-    res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}.exe`});
+    res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${0.06}/xornet-reporter-v${0.06}.exe`});
 }); 
 
 // Websockets
