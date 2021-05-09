@@ -34,6 +34,7 @@ async function getStats(){
         }, 
         cpu: data.currentLoad.currentLoad,
         network: data.networkStats,
+        reporterVersion: version,
     };   
       
     return stats; 
