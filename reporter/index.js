@@ -6,13 +6,15 @@ const fs = require('fs');
 const ProgressBar = require('progress');
 require('colors');
 
-const version = 0.08;
+const version = 0.09;
 const logo = [
     '    __  __      _____ \n',
     '\\_//  \\|__)|\\ ||_  |  \n',
     `/ \\\\__/| \\ | \\||__ |  ${version}\n`,
 ]
 console.log(logo.join("").magenta);
+
+let static = {};
 
 function getSystemExtension(){
     switch (os.platform()) {
@@ -97,6 +99,7 @@ async function getStats(){
     const name = os.hostname();
     const platform = os.platform();
 
+
     valueObject = {
         networkStats: `(*) tx_sec, rx_sec`,
         currentLoad: 'currentLoad',
@@ -105,6 +108,7 @@ async function getStats(){
     const data = await si.get(valueObject);
 
     let stats = {
+        static,
         name,
         platform,
         ram: {
@@ -119,7 +123,12 @@ async function getStats(){
     return stats; 
 }
 
+
 async function connectToXornet(){
+    console.log("[INFO]".bgCyan.black + ' Fetching system information...');
+    static = await si.getStaticData();
+    console.log("[INFO]".bgCyan.black + ' System information collection finished');
+
     const backend = "ws://backend.xornet.cloud";
     let socket = io.connect(backend, { reconnect: true });
     
@@ -132,10 +141,11 @@ async function connectToXornet(){
 
     socket.on('connect', async () => {
         console.log("[CONNECTED]".bgGreen.black + ` Connected to ${backend.green}`);
+        socket.emit('identity', static.system.uuid);
         emitter = setInterval(function() {
             socket.emit('report', statistics)
         }, 1000);
-    });
+    }); 
 
     socket.on('disconnect', async () => {
         console.log("[WARN]".bgYellow.black + ` Disconnected from ${backend}`);

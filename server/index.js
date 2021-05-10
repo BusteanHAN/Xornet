@@ -7,7 +7,7 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http, {cors: { origin: "*" }});
 app.use(morgan("dev")); // Enable HTTP code logs
 
-let vms = new Map();
+let machines = new Map();
 
 app.get("/updates", async (req, res) => {
     try {
@@ -23,6 +23,7 @@ app.get("/updates", async (req, res) => {
 // Websockets
 io.on("connection", async socket => {
     console.log('connection');
+    socket.on('identity', identity => console.log(identity));
 
     socket.on('report', async report => {
         if (report.name){
@@ -56,13 +57,13 @@ io.on("connection", async socket => {
                 }; 
 
                 // console.log(report);
-                vms.set(report.name, report); 
+                machines.set(report.static.system.uuid, report); 
             }
         } 
     }); 
 
     setInterval(async () => {
-        socket.emit("vms", Array.from(vms.values()));
+        socket.emit("machines", Array.from(machines.values()));
     }, 1000);
 });
 
