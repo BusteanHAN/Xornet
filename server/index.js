@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express(); 
 const morgan = require("morgan");
+const axios  = require("axios");
 const port = process.env.PORT || 8080;
 const http = require("http").createServer(app);
 const io = require("socket.io")(http, {cors: { origin: "*" }});
@@ -8,9 +9,15 @@ app.use(morgan("dev")); // Enable HTTP code logs
 
 let vms = new Map();
 
-const latestVersion = 0.06;
-app.get("/updates", (req, res) => {
-    res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}.exe`});
+app.get("/updates", async (req, res) => {
+    try {
+        const { data } = await axios.get('https://api.github.com/repos/Geoxor/Xornet/releases');
+        latestVersion = parseFloat(data[0].tag_name.replace("v", ""));
+        res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`});
+    } catch (error) {
+        latestVersion = 0.08;
+        res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`});
+    }
 }); 
 
 // Websockets

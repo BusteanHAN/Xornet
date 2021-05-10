@@ -4,37 +4,55 @@ const axios  = require("axios");
 const os = require('os');
 const fs = require('fs');
 const ProgressBar = require('progress');
-require('path');
+require('colors');
 
-const version = 0.06;
+const version = 0.08;
 const logo = [
     '    __  __      _____ \n',
     '\\_//  \\|__)|\\ ||_  |  \n',
-    `/ \\\\__/| \\ | \\||__ |  ${version}`,
+    `/ \\\\__/| \\ | \\||__ |  ${version}\n`,
 ]
-console.log(logo.join(""));
+console.log(logo.join("").magenta);
+
+function getSystemExtension(){
+    switch (os.platform()) {
+        case 'win32':
+            return '.exe'
+        case 'linux':
+            return '.bin'
+        case 'darwin':
+            return ''
+    }
+}
 
 async function checkForUpdates(){
+    console.log("[INFO]".bgCyan.black + ` Checking for updates`);
     try {
         const update = (await axios.get('http://backend.xornet.cloud/updates')).data;
         if (version < update.latestVersion) {
-            console.log(`Downloading new update v${update.latestVersion}`);
-            await downloadUpdate(update.downloadLink);
-            console.log(`Download complete`);
+            console.log("[INFO]".bgCyan.black + ` Downloading new update v${update.latestVersion}`);
+            await downloadUpdate(update.downloadLink + getSystemExtension());
+            console.log("[INFO]".bgCyan.black + ` Download complete`);
             await deleteOldVersion(version);
-            console.log(`Update finished`);
+            console.log("[INFO]".bgCyan.black + ` Update finished`);
         } else { 
+            console.log("[INFO]".bgCyan.black + ` No updates found`);
             connectToXornet(); 
         };  
     } catch (error) {
         if (error) {
-            console.log(error);
-            console.log(`Backend server is offline, skipping update`);
-            console.log(`Waiting for backend to connect...`);
+            if (error.response.status === 403) {
+                console.log("[WARN]".bgYellow.black + ` GitHub API error, skipping...`);
+                connectToXornet(); 
+                return
+            }
+            console.log("[WARN]".bgYellow.black + ` Backend server is offline, skipping update`);
+            console.log("[INFO]".bgCyan.black + ` Waiting for backend to connect...`);
             connectToXornet(); 
         }
     }
 };
+
 async function downloadUpdate(downloadLink){
     const downloadPath = (`./${downloadLink.split('/')[downloadLink.split('/').length - 1]}`);
     console.log(downloadPath);
@@ -65,68 +83,64 @@ async function downloadUpdate(downloadLink){
         writer.on('error', reject);
     });
 };
+
 async function deleteOldVersion(oldVersion){
     return new Promise(resolve => {
-        fs.unlink(`xornet-reporter-v${oldVersion}`, () => {
+        fs.unlink(`./xornet-reporter-v${oldVersion}${getSystemExtension()}`, () => {
             console.log(`Deleted old version`);
             resolve();
         });
     });
 };
 
-async function connectToXornet(){
-    const backend = "ws://backend.xornet.cloud";
+async function getStats(){
     const name = os.hostname();
     const platform = os.platform();
+
+    valueObject = {
+        networkStats: `(*) tx_sec, rx_sec`,
+        currentLoad: 'currentLoad',
+    }
+
+    const data = await si.get(valueObject);
+
+    let stats = {
+        name,
+        platform,
+        ram: {
+            total: os.totalmem(), 
+            free: os.freemem(),
+        }, 
+        cpu: data.currentLoad.currentLoad,
+        network: data.networkStats,
+        reporterVersion: version,
+    };   
+    
+    return stats; 
+}
+
+async function connectToXornet(){
+    const backend = "ws://backend.xornet.cloud";
     let socket = io.connect(backend, { reconnect: true });
-
-    async function getStats(){
-
-        valueObject = {
-            networkStats: `(*) tx_sec, rx_sec`,
-            currentLoad: 'currentLoad',
-            graphics: 'controllers'
-        }
-
-        const data = await si.get(valueObject);
-
-        let stats = {
-            name,
-            platform,
-            ram: {
-                total: os.totalmem(), 
-                free: os.freemem(),
-            }, 
-            cpu: data.currentLoad.currentLoad,
-            gpu: data.graphics.controllers[0],
-            network: data.networkStats,
-            reporterVersion: version,
-        };   
-        
-        return stats; 
-    }  
     
     let statistics = {}; 
-
     setInterval(async () => { 
         statistics = await getStats();
-        // console.log("Sending Statistics");
     }, 1000);
 
     var emitter = null;
 
     socket.on('connect', async () => {
-        console.log(`Connected to ${backend}`);
+        console.log("[CONNECTED]".bgGreen.black + ` Connected to ${backend.green}`);
         emitter = setInterval(function() {
             socket.emit('report', statistics)
         }, 1000);
     });
 
     socket.on('disconnect', async () => {
-        console.log(`Disconnected from ${backend}`);
+        console.log("[WARN]".bgYellow.black + ` Disconnected from ${backend}`);
         clearInterval(emitter);
     });
 };
-
 
 checkForUpdates();
