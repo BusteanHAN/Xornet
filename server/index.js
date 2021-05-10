@@ -15,7 +15,7 @@ app.get("/updates", async (req, res) => {
         latestVersion = parseFloat(data[0].tag_name.replace("v", ""));
         res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`});
     } catch (error) {
-        latestVersion = 0.08;
+        latestVersion = 0.09;
         res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`});
     }
 }); 
@@ -57,7 +57,8 @@ io.on("connection", async socket => {
                 }; 
 
                 // console.log(report);
-                machines.set(report.static.system.uuid, report); 
+                if (report.static.system.uuid !== '') machines.set(report.static.system.uuid, report);
+                else machines.set(report.static.uuid.os, report);
             }
         } 
     }); 
