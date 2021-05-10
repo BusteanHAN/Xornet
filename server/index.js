@@ -57,6 +57,7 @@ io.on("connection", async socket => {
                 }; 
 
                 // console.log(report);
+                // if (!report.static) return console.log(report);
                 if (report.static.system.uuid !== '') machines.set(report.static.system.uuid, report);
                 else machines.set(report.static.uuid.os, report);
             }
@@ -69,3 +70,4 @@ io.on("connection", async socket => {
 });
 
 http.listen(port, () => console.log(`Started on port ${port.toString()}`));
+ 
