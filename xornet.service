@@ -1,0 +1,14 @@
+[Unit]
+Description=Xornet reporter
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=$USER
+ExecStart=/etc/xornet/xornet-reporter-v0.09.bin.09
+
+[Install]
+WantedBy=multi-user.target
