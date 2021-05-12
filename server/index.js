@@ -7,6 +7,34 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http, {cors: { origin: "*" }});
 app.use(morgan("dev")); // Enable HTTP code logs
 
+
+// Weird hackers attempting to connect to these endpoints.
+// Saving these for later so I can IP ban ppl who try accessing these
+//
+// GET /blog/wp-includes/wlwmanifest.xml
+// GET /web/wp-includes/wlwmanifest.xml
+// GET /wordpress/wp-includes/wlwmanifest.xml
+// GET /website/wp-includes/wlwmanifest.xml
+// GET /wp/wp-includes/wlwmanifest.xml
+// GET /news/wp-includes/wlwmanifest.xml
+// GET /2020/wp-includes/wlwmanifest.xml
+// GET /2019/wp-includes/wlwmanifest.xml
+// GET /shop/wp-includes/wlwmanifest.xml
+// GET /wp1/wp-includes/wlwmanifest.xml
+// GET /test/wp-includes/wlwmanifest.xml
+// GET /wp2/wp-includes/wlwmanifest.xml
+// GET /site/wp-includes/wlwmanifest.xml
+// GET /cms/wp-includes/wlwmanifest.xml
+// GET /sito/wp-includes/wlwmanifest.xml
+// GET /TP/public/index.php
+// GET /TP/index.php
+// GET /thinkphp/html/public/index.php
+// GET /html/public/index.php
+// GET /public/index.php
+// GET /TP/html/public/index.php
+// GET /elrekt.php
+// GET /index.php
+
 let machines = new Map();
 
 app.get("/updates", async (req, res) => {
@@ -14,11 +42,15 @@ app.get("/updates", async (req, res) => {
         const { data } = await axios.get('https://api.github.com/repos/Geoxor/Xornet/releases');
         latestVersion = parseFloat(data[0].tag_name.replace("v", ""));
         res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`});
-    } catch (error) {
+    } catch (error) { 
         latestVersion = 0.09;
         res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`});
     }
 }); 
+
+setInterval(() => {
+    machines = new Map();
+}, 60000);
 
 // Websockets
 io.on("connection", async socket => {
@@ -36,6 +68,10 @@ io.on("connection", async socket => {
             // Parse CPU usage
             report.cpu = parseInt(report.cpu);
  
+            // Remove dashes from UUID
+            report.static.uuid.os = report.static.uuid.os.replace(/-/g, '');
+            report.static.system.uuid = report.static.system.uuid.replace(/-/g, '');
+
             if (Array.isArray(report.network)){ 
                 
                 // Clear out null interfaces
@@ -58,14 +94,22 @@ io.on("connection", async socket => {
 
                 // console.log(report);
                 // if (!report.static) return console.log(report);
-                if (report.static.system.uuid !== '') machines.set(report.static.system.uuid, report);
-                else machines.set(report.static.uuid.os, report);
+                
+                // Append the UUID in the report's object depending from either the system or the os object
+                if (report.static.system.uuid !== '') {
+                    report.uuid = report.static.system.uuid; 
+                    machines.set(report.static.system.uuid, report);
+                }
+                else {
+                    report.uuid = report.static.uuid.os;
+                    machines.set(report.static.uuid.os, report);   
+                }
             }
         } 
     }); 
 
     setInterval(async () => {
-        socket.emit("machines", Array.from(machines.values()));
+        socket.emit("machines", Object.fromEntries(machines));
     }, 1000);
 });
 
