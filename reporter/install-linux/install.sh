@@ -12,7 +12,7 @@ echo "Xornet service disabled!"
 # Delete all files
 sudo rm -rf /etc/xornet
 sudo rmdir /etc/xornet
-sudo rm /etc/systemd/system/xornet.service
+sudo rm /etc/systemd/xornet.service
 echo "Xornet uninstalled!"
 
 # Create folder again
