@@ -6,7 +6,7 @@ const fs = require('fs');
 const ProgressBar = require('progress');
 require('colors');
  
-const version = 0.09;
+const version = 0.10;
 const logo = [
     '    __  __      _____ \n',
     '\\_//  \\|__)|\\ ||_  |  \n',
@@ -128,10 +128,17 @@ async function getStats(){
 async function connectToXornet(){
     console.log("[INFO]".bgCyan.black + ' Fetching system information...');
     static = await si.getStaticData();
+    static.system.uuid = static.system.uuid.replace(/-/g, '');
     console.log("[INFO]".bgCyan.black + ' System information collection finished');
 
     const backend = "ws://backend.xornet.cloud";
-    let socket = io.connect(backend, { reconnect: true });
+    let socket = io.connect(backend, { 
+        reconnect: true,
+        auth: {
+            type: 'reporter',
+            uuid: static.system.uuid,
+        }, 
+    });
     
     let statistics = {}; 
     setInterval(async () => { 
