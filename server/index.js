@@ -45,7 +45,7 @@ app.get("/updates", async (req, res) => {
         latestVersion = 0.09;
         res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`});
     }
-}); 
+});
 
 setInterval(() => {
     machines = new Map();
@@ -60,7 +60,7 @@ io.on("connection", async socket => {
     if (socket.handshake.auth.type === "client") socket.join("client");
     if (socket.handshake.auth.type === "reporter") socket.join("reporter");
     if (!socket.handshake.auth.type) return socket.disconnect();
-    
+ 
     console.log(socket.handshake.auth);
     socket.on('report', async report => {
         if (report.name){
@@ -74,8 +74,7 @@ io.on("connection", async socket => {
             report.cpu = parseInt(report.cpu);
  
             // Remove dashes from UUID
-            report.static.uuid.os = report.static.uuid.os.replace(/-/g, '');
-            report.static.system.uuid = report.static.system.uuid.replace(/-/g, '');
+            report.uuid = report.uuid.replace(/-/g, '');
 
             if (Array.isArray(report.network)){ 
                 
@@ -84,7 +83,6 @@ io.on("connection", async socket => {
 
                 // Get total network interfaces 
                 totalInterfaces = report.network.length;
- 
  
                 // Combine all bandwidth together
                 let TxSec = report.network.reduce((a, b) => (a + b.tx_sec), 0) * 8 / 1000 / 1000;
@@ -101,14 +99,15 @@ io.on("connection", async socket => {
                 // if (!report.static) return console.log(report);
                 
                 // Append the UUID in the report's object depending from either the system or the os object
-                if (report.static.system.uuid !== '') {
-                    report.uuid = report.static.system.uuid; 
-                    machines.set(report.static.system.uuid, report);
-                }
-                else {
-                    report.uuid = report.static.uuid.os;
-                    machines.set(report.static.uuid.os, report);   
-                }
+                // if (report.static.system.uuid !== '') {
+                //     report.uuid = report.static.system.uuid; 
+                //     machines.set(report.static.system.uuid, report);
+                // }
+                // else {
+                //     report.uuid = report.static.uuid.os;
+                //     machines.set(report.static.uuid.os, report);   
+                // }
+                machines.set(report.uuid, report);
             }
         } 
     }); 

@@ -108,8 +108,13 @@ async function getStats(){
 
     const data = await si.get(valueObject);
 
+    let uuid;
+    if (static.system.uuid !== '') { uuid = static.system.uuid } 
+    else { uuid = static.uuid.os }
+
     let stats = {
-        static,
+        uuid: uuid,
+        isVirtual: static.system.virtual,
         name,
         platform,
         ram: {
@@ -135,6 +140,7 @@ async function connectToXornet(){
     let socket = io.connect(backend, { 
         reconnect: true,
         auth: {
+            static,
             type: 'reporter',
             uuid: static.system.uuid,
         }, 
