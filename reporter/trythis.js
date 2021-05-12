@@ -5,7 +5,7 @@ let static = {};
 const version = 0.09;
 
 // This will get information about all the drives on the system
-async function getDriveInformation() {
+async function getDriveInfo() {
     drives = []; // Create an array for the drives to be stored within
     static = await (await si.diskLayout());
     // This will loop through all the drives and push the data into the drives Array
@@ -42,7 +42,7 @@ async function getStats() {
         cpu: data.currentLoad.currentLoad,
         network: data.networkStats,
         reporterVersion: version,
-        drives: await getDriveInformation()
+        drives: await getDriveInfo()
     };
 
     return stats;
