@@ -152,7 +152,7 @@ async function connectToXornet(){
     static.system.uuid = static.system.uuid.replace(/-/g, '');
     console.log("[INFO]".bgCyan.black + ' System information collection finished');
 
-    const backend = "ws://localhost:8080";
+    const backend = "ws://backend.xornet.cloud";
     let socket = io.connect(backend, { 
         reconnect: true,
         auth: {
