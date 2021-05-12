@@ -51,11 +51,17 @@ setInterval(() => {
     machines = new Map();
 }, 60000);
 
+setInterval(async () => {
+    io.sockets.in('client').emit("machines", Object.fromEntries(machines));
+}, 1000);
+
 // Websockets
 io.on("connection", async socket => {
-    console.log(socket.handshake.auth);
     if (socket.handshake.auth.type === "client") socket.join("client");
-
+    if (socket.handshake.auth.type === "reporter") socket.join("reporter");
+    if (!socket.handshake.auth.type) return socket.disconnect();
+    
+    console.log(socket.handshake.auth);
     socket.on('report', async report => {
         if (report.name){
             
@@ -106,11 +112,9 @@ io.on("connection", async socket => {
             }
         } 
     }); 
-
-    setInterval(async () => {
-        io.sockets.in('client').emit("machines", Object.fromEntries(machines));
-    }, 1000);
 });
+
+
 
 http.listen(port, () => console.log(`Started on port ${port.toString()}`));
  
