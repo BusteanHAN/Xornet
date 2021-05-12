@@ -7,7 +7,6 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http, {cors: { origin: "*" }});
 app.use(morgan("dev")); // Enable HTTP code logs
 
-
 // Weird hackers attempting to connect to these endpoints.
 // Saving these for later so I can IP ban ppl who try accessing these
 //
@@ -54,8 +53,8 @@ setInterval(() => {
 
 // Websockets
 io.on("connection", async socket => {
-    console.log('connection');
-    socket.on('identity', identity => console.log(identity));
+    // console.log(socket.handshake.auth);
+    if (socket.handshake.auth.type === "client") socket.join("client");
 
     socket.on('report', async report => {
         if (report.name){
@@ -109,7 +108,7 @@ io.on("connection", async socket => {
     }); 
 
     setInterval(async () => {
-        socket.emit("machines", Object.fromEntries(machines));
+        io.sockets.in('client').emit("machines", Object.fromEntries(machines));
     }, 1000);
 });
 
