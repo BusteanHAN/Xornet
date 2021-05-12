@@ -128,10 +128,17 @@ async function getStats(){
 async function connectToXornet(){
     console.log("[INFO]".bgCyan.black + ' Fetching system information...');
     static = await si.getStaticData();
+    static.system.uuid = static.system.uuid.replace(/-/g, '');
     console.log("[INFO]".bgCyan.black + ' System information collection finished');
 
     const backend = "ws://backend.xornet.cloud";
-    let socket = io.connect(backend, { reconnect: true });
+    let socket = io.connect(backend, { 
+        reconnect: true,
+        auth: {
+            type: 'reporter',
+            uuid: static.system.uuid,
+        }, 
+    });
     
     let statistics = {}; 
     setInterval(async () => { 

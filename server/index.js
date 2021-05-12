@@ -53,7 +53,7 @@ setInterval(() => {
 
 // Websockets
 io.on("connection", async socket => {
-    // console.log(socket.handshake.auth);
+    console.log(socket.handshake.auth);
     if (socket.handshake.auth.type === "client") socket.join("client");
 
     socket.on('report', async report => {
