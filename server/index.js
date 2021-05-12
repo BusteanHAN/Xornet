@@ -42,7 +42,7 @@ app.get("/updates", async (req, res) => {
         latestVersion = parseFloat(data[0].tag_name.replace("v", ""));
         res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`});
     } catch (error) { 
-        latestVersion = 0.09;
+        latestVersion = 0.11;
         res.json({latestVersion, downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`});
     }
 });
@@ -61,7 +61,7 @@ io.on("connection", async socket => {
     if (socket.handshake.auth.type === "reporter") socket.join("reporter");
     if (!socket.handshake.auth.type) return socket.disconnect();
  
-    console.log(socket.handshake.auth);
+    console.log({type: socket.handshake.auth.type, uuid: socket.handshake.auth.uuid});
     socket.on('report', async report => {
         if (report.name){
             
