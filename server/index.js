@@ -68,6 +68,10 @@ io.on("connection", async socket => {
             // Parse CPU usage
             report.cpu = parseInt(report.cpu);
  
+            // Remove dashes from UUID
+            report.static.uuid.os = report.static.uuid.os.replace(/-/g, '');
+            report.static.system.uuid = report.static.system.uuid.replace(/-/g, '');
+
             if (Array.isArray(report.network)){ 
                 
                 // Clear out null interfaces
@@ -90,14 +94,22 @@ io.on("connection", async socket => {
 
                 // console.log(report);
                 // if (!report.static) return console.log(report);
-                if (report.static.system.uuid !== '') machines.set(report.static.system.uuid, report);
-                else machines.set(report.static.uuid.os, report);
+                
+                // Append the UUID in the report's object depending from either the system or the os object
+                if (report.static.system.uuid !== '') {
+                    report.uuid = report.static.system.uuid; 
+                    machines.set(report.static.system.uuid, report);
+                }
+                else {
+                    report.uuid = report.static.uuid.os;
+                    machines.set(report.static.uuid.os, report);   
+                }
             }
         } 
     }); 
 
     setInterval(async () => {
-        socket.emit("machines", Array.from(machines.values()));
+        socket.emit("machines", Object.fromEntries(machines));
     }, 1000);
 });
 
