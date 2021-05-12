@@ -5,8 +5,6 @@ let static = {};
 const version = 0.09;
 
 async function getDriveInformation() {
-  x = 0;
-  total = 0;
   drives = [];
   static = await (await si.getStaticData()).diskLayout;
   for (x in static) {
