@@ -9,7 +9,7 @@ Restart=always
 RestartSec=1
 User=$USER
 WorkingDirectory=/home/$USER/xornet
-ExecStart=/home/$USER/xornet/xornet-reporter-v0.09.bin.09
+ExecStart=/home/$USER/xornet/xornet-reporter-v0.10.bin
 
 [Install]
 WantedBy=multi-user.target
