@@ -33,6 +33,28 @@ app.use(morgan("dev")); // Enable HTTP code logs
 // GET /TP/html/public/index.php
 // GET /elrekt.php
 // GET /index.php
+// GET /wp-includes/wlwmanifest.xml
+// GET /xmlrpc.php?rsd
+// GET /blog/wp-includes/wlwmanifest.xml
+// GET /web/wp-includes/wlwmanifest.xml
+// GET /wordpress/wp-includes/wlwmanifest.xml
+// GET /website/wp-includes/wlwmanifest.xml
+// GET /wp/wp-includes/wlwmanifest.xml
+// GET /news/wp-includes/wlwmanifest.xml
+// GET /2018/wp-includes/wlwmanifest.xml
+// GET /2019/wp-includes/wlwmanifest.xml
+// GET /shop/wp-includes/wlwmanifest.xml
+// GET /news/wp-includes/wlwmanifest.xml
+// GET /2018/wp-includes/wlwmanifest.xml
+// GET /2019/wp-includes/wlwmanifest.xml
+// GET /shop/wp-includes/wlwmanifest.xml
+// GET /wp1/wp-includes/wlwmanifest.xml
+// GET /test/wp-includes/wlwmanifest.xml
+// GET /media/wp-includes/wlwmanifest.xml
+// GET /wp2/wp-includes/wlwmanifest.xml
+// GET /site/wp-includes/wlwmanifest.xml
+// GET /cms/wp-includes/wlwmanifest.xml
+// GET /sito/wp-includes/wlwmanifest.xml
 
 let machines = new Map();
 
