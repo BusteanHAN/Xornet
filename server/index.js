@@ -77,7 +77,6 @@ io.on("connection", async (socket) => {
 
   socket.on("report", async (report) => {
     if (report.name) {
-        console.log(report);
 
         // Parse RAM usage & determine used
         report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1000 / 1000 / 1000).toFixed(2));
