@@ -81,9 +81,13 @@ io.on("connection", async (socket) => {
         report.ram.total = parseFloat((report.ram.total / 1000 / 1000 / 1000).toFixed(2));
         report.ram.free = parseFloat((report.ram.free / 1000 / 1000 / 1000).toFixed(2));
 
+        report.disks = {
+            list: [],
+            total: 0,
+        };
+
         // Parse Discs
         if(socket.handshake.auth.static.disks){
-            report.disks = {};
             report.disks.list = socket.handshake.auth.static.disks;
             report.disks.total = Math.floor((report.disks.list.map(disk => disk.size).reduce((a, b) => a + b, 0)) / 1000 / 1000 / 1000);
             // console.log(report.disks.total);
