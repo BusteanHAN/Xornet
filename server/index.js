@@ -10,51 +10,61 @@ app.use(morgan("dev")); // Enable HTTP code logs
 // Weird hackers attempting to connect to these endpoints.
 // Saving these for later so I can IP ban ppl who try accessing these
 // 
-// GET /blog/wp-includes/wlwmanifest.xml
-// GET /web/wp-includes/wlwmanifest.xml
-// GET /wordpress/wp-includes/wlwmanifest.xml
-// GET /website/wp-includes/wlwmanifest.xml
-// GET /wp/wp-includes/wlwmanifest.xml
-// GET /news/wp-includes/wlwmanifest.xml
-// GET /2020/wp-includes/wlwmanifest.xml
-// GET /2019/wp-includes/wlwmanifest.xml
-// GET /shop/wp-includes/wlwmanifest.xml
-// GET /wp1/wp-includes/wlwmanifest.xml
-// GET /test/wp-includes/wlwmanifest.xml
-// GET /wp2/wp-includes/wlwmanifest.xml
-// GET /site/wp-includes/wlwmanifest.xml
-// GET /cms/wp-includes/wlwmanifest.xml
-// GET /sito/wp-includes/wlwmanifest.xml
-// GET /TP/public/index.php
-// GET /TP/index.php
-// GET /thinkphp/html/public/index.php
-// GET /html/public/index.php
-// GET /public/index.php
-// GET /TP/html/public/index.php
-// GET /elrekt.php
-// GET /index.php
-// GET /wp-includes/wlwmanifest.xml
-// GET /xmlrpc.php?rsd
-// GET /blog/wp-includes/wlwmanifest.xml
-// GET /web/wp-includes/wlwmanifest.xml
-// GET /wordpress/wp-includes/wlwmanifest.xml
-// GET /website/wp-includes/wlwmanifest.xml
-// GET /wp/wp-includes/wlwmanifest.xml
-// GET /news/wp-includes/wlwmanifest.xml
-// GET /2018/wp-includes/wlwmanifest.xml
-// GET /2019/wp-includes/wlwmanifest.xml
-// GET /shop/wp-includes/wlwmanifest.xml
-// GET /news/wp-includes/wlwmanifest.xml
-// GET /2018/wp-includes/wlwmanifest.xml
-// GET /2019/wp-includes/wlwmanifest.xml
-// GET /shop/wp-includes/wlwmanifest.xml
-// GET /wp1/wp-includes/wlwmanifest.xml
-// GET /test/wp-includes/wlwmanifest.xml
-// GET /media/wp-includes/wlwmanifest.xml
-// GET /wp2/wp-includes/wlwmanifest.xml
-// GET /site/wp-includes/wlwmanifest.xml
-// GET /cms/wp-includes/wlwmanifest.xml
-// GET /sito/wp-includes/wlwmanifest.xml
+app.get("/blog/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/web/wp-includes/wlwmanifest.xml",       (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/wordpress/wp-includes/wlwmanifest.xml", (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/website/wp-includes/wlwmanifest.xml",   (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/wp/wp-includes/wlwmanifest.xml",        (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/news/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/2020/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/2019/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/shop/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/wp1/wp-includes/wlwmanifest.xml",       (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/test/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/wp2/wp-includes/wlwmanifest.xml",       (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/site/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/cms/wp-includes/wlwmanifest.xml",       (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/sito/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/TP/public/index.php",                   (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/TP/index.php",                          (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/thinkphp/html/public/index.php",        (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/html/public/index.php",                 (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/public/index.php",                      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/TP/html/public/index.php",              (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/elrekt.php",                            (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/index.php",                             (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/wp-includes/wlwmanifest.xml",           (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/xmlrpc.php?rsd",                        (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/blog/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/web/wp-includes/wlwmanifest.xml",       (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/wordpress/wp-includes/wlwmanifest.xml", (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/website/wp-includes/wlwmanifest.xml",   (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/wp/wp-includes/wlwmanifest.xml",        (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/news/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/2018/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/2019/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/shop/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/news/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/2018/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/2019/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/shop/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/wp1/wp-includes/wlwmanifest.xml",       (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/test/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/media/wp-includes/wlwmanifest.xml",     (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/wp2/wp-includes/wlwmanifest.xml",       (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/site/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/cms/wp-includes/wlwmanifest.xml",       (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/sito/wp-includes/wlwmanifest.xml",      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/.env",                                  (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/",                                      (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/info.php",                              (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/config.json",                           (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/.git/config",                           (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/v2/_catalog",                           (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/api/search?folderIds=0",                (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/idx_config/",                           (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/telescope/requests",                    (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
+app.get("/server-status",                         (req, res) => res.json({message: "Brute force attack detected, your IP has been added to the watchlist"}));
 
 let machines = new Map();
 
