@@ -163,7 +163,7 @@ async function connectToXornet() {
     "[INFO]".bgCyan.black + " System information collection finished"
   );
 
-  const backend = "ws://localhost:8080";
+  const backend = "ws://backend.xornet.cloud";
   let socket = io.connect(backend, {
     reconnect: true,
     auth: {
