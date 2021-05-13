@@ -96,6 +96,22 @@ async function deleteOldVersion(oldVersion){
     });
 };
 
+// This will get information about all the drives on the system
+async function getDiskInfo() {
+    disks = []; // Create an array for the drives to be stored within
+    diskLayouts = await si.diskLayout();
+    // This will loop through all the drives and push the data into the drives Array
+    for (x of diskLayouts) {
+        disks.push({
+            type: x.type,
+            name: x.name,
+            size: x.size
+        });
+        x += 1; // Increments the loop
+    }
+    return disks;
+}
+
 async function getStats(){
     const name = os.hostname();
     const platform = os.platform();
@@ -129,10 +145,10 @@ async function getStats(){
     return stats; 
 }
 
-
 async function connectToXornet(){
     console.log("[INFO]".bgCyan.black + ' Fetching system information...');
     static = await si.getStaticData();
+    static.disks = await getDiskInfo();
     static.system.uuid = static.system.uuid.replace(/-/g, '');
     console.log("[INFO]".bgCyan.black + ' System information collection finished');
 
