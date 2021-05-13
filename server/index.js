@@ -10,7 +10,7 @@ app.use(morgan("dev")); // Enable HTTP code logs
 // Weird hackers attempting to connect to these endpoints.
 // Saving these for later so I can IP ban ppl who try accessing these
 
-let hackerMessage = { message: "Brute force attack detected, your IP has been added to the watchlist" };
+let hackerMessage = { message: "Brute force attack detected, your IP has been added to the watchlist", link: "https://media.tenor.co/videos/04092e8b7235c59632755352927cf20f/mp4"};
 
 app.get("/blog/wp-includes/wlwmanifest.xml",      (req, res) => res.json(hackerMessage));
 app.get("/web/wp-includes/wlwmanifest.xml",       (req, res) => res.json(hackerMessage));
