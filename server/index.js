@@ -74,24 +74,15 @@ io.on("connection", async (socket) => {
     uuid: socket.handshake.auth.uuid,
     // name: socket.handshake.auth.static.os.hostname,
   });
+
   socket.on("report", async (report) => {
     if (report.name) {
+        console.log(report);
+
         // Parse RAM usage & determine used
         report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1000 / 1000 / 1000).toFixed(2));
         report.ram.total = parseFloat((report.ram.total / 1000 / 1000 / 1000).toFixed(2));
         report.ram.free = parseFloat((report.ram.free / 1000 / 1000 / 1000).toFixed(2));
-
-        report.disks = {
-            list: [],
-            total: 0,
-        };
-
-        // Parse Discs
-        if(socket.handshake.auth.static.disks){
-            report.disks.list = socket.handshake.auth.static.disks;
-            report.disks.total = Math.floor((report.disks.list.map(disk => disk.size).reduce((a, b) => a + b, 0)) / 1000 / 1000 / 1000);
-            // console.log(report.disks.total);
-        };
 
         // Parse CPU usage
         report.cpu = parseInt(report.cpu);
