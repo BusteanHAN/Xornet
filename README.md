@@ -1,3 +1,5 @@
+![](https://github.com/aleen42/badges/raw/master/src/vue.svg)
+
 ![Xornet Logo](https://cdn.discordapp.com/attachments/806300597338767450/840561743804891166/unknown.png)
 
 # Information
