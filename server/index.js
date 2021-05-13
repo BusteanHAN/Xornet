@@ -9,7 +9,7 @@ app.use(morgan("dev")); // Enable HTTP code logs
 
 // Weird hackers attempting to connect to these endpoints.
 // Saving these for later so I can IP ban ppl who try accessing these
-//
+// 
 // GET /blog/wp-includes/wlwmanifest.xml
 // GET /web/wp-includes/wlwmanifest.xml
 // GET /wordpress/wp-includes/wlwmanifest.xml
@@ -72,136 +72,50 @@ io.on("connection", async (socket) => {
   console.log({
     type: socket.handshake.auth.type,
     uuid: socket.handshake.auth.uuid,
+    // name: socket.handshake.auth.static.os.hostname,
   });
   socket.on("report", async (report) => {
     if (report.name) {
-      // Parse RAM usage & determine used
-      report.ram.used = parseFloat(
-        ((report.ram.total - report.ram.free) / 1000 / 1000 / 1000).toFixed(2)
-      );
-      report.ram.total = parseFloat(
-        (report.ram.total / 1000 / 1000 / 1000).toFixed(2)
-      );
-      report.ram.free = parseFloat(
-        (report.ram.free / 1000 / 1000 / 1000).toFixed(2)
-      );
+        // Parse RAM usage & determine used
+        report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1000 / 1000 / 1000).toFixed(2));
+        report.ram.total = parseFloat((report.ram.total / 1000 / 1000 / 1000).toFixed(2));
+        report.ram.free = parseFloat((report.ram.free / 1000 / 1000 / 1000).toFixed(2));
 
-      // Parse CPU usage
-      report.cpu = parseInt(report.cpu);
-
-      // Remove dashes from UUID
-      report.uuid = report.uuid.replace(/-/g, "");
-
-      if (Array.isArray(report.network)) {
-        // Clear out null interfaces
-        report.network = report.network.filter(
-          (iface) => iface.tx_sec !== null && iface.rx_sec !== null
-        );
-
-        // Get total network interfaces
-        totalInterfaces = report.network.length;
-
-        // Combine all bandwidth together
-        let TxSec =
-          (report.network.reduce((a, b) => a + b.tx_sec, 0) * 8) / 1000 / 1000;
-        let RxSec =
-          (report.network.reduce((a, b) => a + b.rx_sec, 0) * 8) / 1000 / 1000;
-
-        // Replace whats there with proper data
-        report.network = {
-          totalInterfaces,
-          TxSec: parseFloat(TxSec.toFixed(2)),
-          RxSec: parseFloat(RxSec.toFixed(2)),
+        // Parse Discs
+        if(socket.handshake.auth.static.disks){
+            report.disks = {};
+            report.disks.list = socket.handshake.auth.static.disks;
+            report.disks.total = Math.floor((report.disks.list.map(disk => disk.size).reduce((a, b) => a + b, 0)) / 1000 / 1000 / 1000);
+            // console.log(report.disks.total);
         };
 
+        // Parse CPU usage
+        report.cpu = parseInt(report.cpu);
 
-        // if (!report.static) return console.log(report);
+        // Remove dashes from UUID
+        report.uuid = report.uuid.replace(/-/g, "");
 
-        // Append the UUID in the report's object depending from either the system or the os object
-        // if (report.static.system.uuid !== '') {
-        //     report.uuid = report.static.system.uuid;
-        //     machines.set(report.static.system.uuid, report);
-        // }
-        // else {
-        //     report.uuid = report.static.uuid.os;
-        //     machines.set(report.static.uuid.os, report);
-        // }
-        machines.set(report.uuid, report);
+        if (Array.isArray(report.network)) {
+            // Clear out null interfaces
+            report.network = report.network.filter((iface) => iface.tx_sec !== null && iface.rx_sec !== null);
+
+            // Get total network interfaces
+            totalInterfaces = report.network.length;
+
+            // Combine all bandwidth together
+            let TxSec = (report.network.reduce((a, b) => a + b.tx_sec, 0) * 8) / 1000 / 1000;
+            let RxSec = (report.network.reduce((a, b) => a + b.rx_sec, 0) * 8) / 1000 / 1000;
+
+            // Replace whats there with proper data
+            report.network = {
+                totalInterfaces,
+                TxSec: parseFloat(TxSec.toFixed(2)),
+                RxSec: parseFloat(RxSec.toFixed(2)),
+            };
+
+            machines.set(report.uuid, report);
       }
     }
-  });
-});
-// Websockets
-io.on("connection", async (socket) => {
-  if (socket.handshake.auth.type === "client") socket.join("client");
-  if (socket.handshake.auth.type === "reporter") socket.join("reporter");
-  if (!socket.handshake.auth.type) return socket.disconnect();
-
-  console.log({
-    type: socket.handshake.auth.type,
-    uuid: socket.handshake.auth.uuid,
-  });
-  socket.on("report", async (report) => {
-    if (report.name) {
-      // Parse RAM usage & determine used
-      report.ram.used = parseFloat(
-        ((report.ram.total - report.ram.free) / 1000 / 1000 / 1000).toFixed(2)
-      );
-      report.ram.total = parseFloat(
-        (report.ram.total / 1000 / 1000 / 1000).toFixed(2)
-      );
-      report.ram.free = parseFloat(
-        (report.ram.free / 1000 / 1000 / 1000).toFixed(2)
-      );
-      
-      report.disks = {};
-      report.disks.list = socket.handshake.auth.static.disks;
-      report.disks.total = Math.floor((report.disks.list.map(disk => disk.size).reduce((a, b) => a + b, 0)) / 1000 / 1000 / 1000);
-      // console.log(report.disks.total);
-
-      // Parse CPU usage
-      report.cpu = parseInt(report.cpu);
-
-      // Remove dashes from UUID
-      report.uuid = report.uuid.replace(/-/g, "");
-
-      if (Array.isArray(report.network)) {
-        // Clear out null interfaces
-        report.network = report.network.filter(
-          (iface) => iface.tx_sec !== null && iface.rx_sec !== null
-        );
-        // Get total network interfaces
-        totalInterfaces = report.network.length;
-
-        // Combine all bandwidth together
-        let TxSec =
-          (report.network.reduce((a, b) => a + b.tx_sec, 0) * 8) / 1000 / 1000;
-        let RxSec =
-          (report.network.reduce((a, b) => a + b.rx_sec, 0) * 8) / 1000 / 1000;
-
-        // Replace whats there with proper data
-        report.network = {
-          totalInterfaces,
-          TxSec: parseFloat(TxSec.toFixed(2)),
-          RxSec: parseFloat(RxSec.toFixed(2)),
-        };
-
-        // console.log(report);
-        // if (!report.static) return console.log(report);
-
-        // Append the UUID in the report's object depending from either the system or the os object
-        if (report.static.system.uuid !== "") {
-          report.uuid = report.static.system.uuid;
-          machines.set(report.static.system.uuid, report);
-        } else {
-          report.uuid = report.static.uuid.os;
-          machines.set(report.static.uuid.os, report);
-        }
-      }
-
-      // TESTING DRIVE STUFF
-    }
-    // console.log(remote);
   });
 });
 
