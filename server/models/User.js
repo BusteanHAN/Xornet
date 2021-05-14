@@ -5,6 +5,7 @@ mongoose.connect('mongodb://localhost:27017/xornet', {useNewUrlParser: true, use
 const schema = new Schema({
     _id:            String,                         // The mongo object ID
     uuid:           String,                         // The user's ID
+    created_at:     Date,                           // Date when the account is created
     username:       String,                         // Username of the user
     password:       String,                         // Encrypted password of the user
     pfp:            String,                         // Link to the pfp of the user
