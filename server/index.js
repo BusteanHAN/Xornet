@@ -51,6 +51,8 @@ io.on("connection", async (socket) => {
   socket.on("report", async (report) => {
     if (report.name) {
 
+        report.rogue = false;
+
         // Parse RAM usage & determine used
         report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1024 / 1024 / 1024).toFixed(2));
         report.ram.total = parseFloat((report.ram.total / 1024 / 1024 / 1024).toFixed(2));
@@ -65,7 +67,7 @@ io.on("connection", async (socket) => {
         if (Array.isArray(report.network)) {
             // Clear out null interfaces
             report.network = report.network.filter((iface) => iface.tx_sec !== null && iface.rx_sec !== null);
-
+            
             // Get total network interfaces
             totalInterfaces = report.network.length;
 
@@ -81,13 +83,12 @@ io.on("connection", async (socket) => {
             };
 
             const uuidRegex = /[a-f0-9]{30}/g;
-            if(uuidRegex.test(report.uuid)) {
-              report.rogue = false;
-              machines.set(report.uuid, report);
-            } else {
-              report.rogue = true;
-              machines.set(report.uuid, report);
-            }
+            const hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]))*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
+
+            if(!uuidRegex.test(report.uuid)) report.rogue = true;
+            if(!hostnameRegex.test(report.uuid)) report.rogue = true;
+
+            machines.set(report.uuid, report);
       }
     }
   });
