@@ -1,5 +1,6 @@
 <template>
   <div class="view home">
+    <loadingScreen :isLoaded="!isLoading"/>
     <serverList :vms="Array.from(serverList.vms.values())" :pms="Array.from(serverList.pms.values())"/>
 
     <div class="content">
@@ -9,8 +10,29 @@
         <infoField title="Total Download Throughput" :value="totalDownloadThroughput + 'mbps'"/>
       </div>
       <div class="machines">
-        <gaugeField :machine="machine" v-for="machine of machines" :key="machine"/>
+        <gaugeField v-if="machines[selectedMachine]" :machine="machines[selectedMachine]"/>
       </div>
+
+      <chart :key="totalUpload[totalUpload.length - 2] + 'upload'" :identity="totalUpload[totalUpload.length - 2] + 'upload'" :type="'line'" :data="{
+        labels: labels,
+        datasets: [
+          {
+            label: 'Upload',
+            data: totalUpload,
+            borderColor: '#ff0062',
+            backgroundColor: '#ff458caa'
+          },
+        ]}"/>
+      <chart :key="totalDownload[totalDownload.length - 1] + 'download'" :identity="totalDownload[totalDownload.length - 1] + 'download'" :type="'line'" :data="{
+        labels: labels,
+        datasets: [
+          {
+            label: 'Download',
+            data: totalDownload,
+            borderColor: '#00c8ff',
+            backgroundColor: '#52daffaa'
+          },
+        ]}"/>
     </div>
   </div>
 </template>
@@ -20,18 +42,29 @@ import socket from '@/services/socket.js';
 import gaugeField from '@/components/gaugeField';
 import infoField from '@/components/infoField';
 import serverList from '@/components/serverList';
+import loadingScreen from '@/components/loadingScreen';
+import chart from '@/components/chart';
 
 export default {
   name: 'home',
   components: {
     infoField,
     gaugeField,
+    chart,
+    loadingScreen,
     serverList,
-
+  },
+  computed: {
+    selectedMachine: function(){
+      return this.$route.params.machine;
+    },
+    isLoading: function(){
+      return Object.values(this.machines).length > 0 ? false : true;
+    }
   },
   data: () => {
     return {
-      machines: [],
+      machines: {},
       serverList: {
         vms: new Map(),
         pms: new Map(),
@@ -39,6 +72,9 @@ export default {
       totalRam: null,
       totalDownloadThroughput: null,
       totalUploadThroughput: null,
+      totalDownload: [],
+      totalUpload: [],
+      labels: [],
     }
   },
   mounted(){
@@ -52,7 +88,7 @@ export default {
       let totalRamUsed = 0; 
       let totalDownloadThroughput = 0;
       let totalUploadThroughput = 0;
-      for(let machine of machines){
+      for(let machine of Object.values(machines)){
         totalRam = totalRam + Math.ceil(machine.ram.total);
         totalRamUsed = totalRamUsed + machine.ram.used;
         totalDownloadThroughput = totalDownloadThroughput + machine.network.RxSec;
@@ -62,19 +98,36 @@ export default {
       this.totalRamUsed = totalRamUsed.toFixed(2);
       this.totalDownloadThroughput = totalDownloadThroughput.toFixed(2);
       this.totalUploadThroughput = totalUploadThroughput.toFixed(2);
+
+      this.totalDownload.push(parseFloat(totalDownloadThroughput.toFixed(2)));
+      this.totalUpload.push(parseFloat(totalUploadThroughput.toFixed(2)));
+      this.labels.push(`${new Date().getHours()}:${new Date().getMinutes()}`);
+
+      if (this.totalDownload.length > 300) {
+        this.totalDownload.shift();
+        this.totalUpload.shift();
+        this.labels.shift();
+      }
     });
   },
   methods: {
     addMachinesToServerList(machines){
-      machines.forEach(machine => {
-        if (machine.static.system.virtual){
-          if(!this.serverList.vms.has(machine.static.uuid.os)) this.serverList.vms.set(machine.static.uuid.os, machine);
+      Object.values(machines).forEach(machine => {
+        if (machine.isVirtual){
+          // if(!this.serverList.vms.has(machine.static.uuid.os)) this.serverList.vms.set(machine.static.uuid.os, machine);
+          this.serverList.vms.set(machine.uuid, machine);
         } else {
-          if(!this.serverList.pms.has(machine.static.uuid.os)) this.serverList.pms.set(machine.static.uuid.os, machine);
+          // if(!this.serverList.pms.has(machine.static.uuid.os)) this.serverList.pms.set(machine.static.uuid.os, machine);
+          this.serverList.pms.set(machine.uuid, machine);
         }
       });
     }
-  }
+  },
+  watch:{
+    $route (to, from){
+      this.isSmall = false;
+    }
+  },
 }
 </script>
 
@@ -94,6 +147,7 @@ export default {
   height: 100%;
   width: 100%;
   display: flex;
+  flex-direction: column;
   gap: 8px;
   overflow: scroll;
   border-radius: 4px 0px 0px 0px;

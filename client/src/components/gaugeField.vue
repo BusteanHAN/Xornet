@@ -29,6 +29,14 @@
       :value="parseFloat(machine.network.RxSec)"
       :maxValue="1000 * machine.network.totalInterfaces"
     />
+    <gauge
+      v-for="disk of machine.disks"
+      :key="disk"
+      :icon="require('@/assets/icons/hdd.png')"
+      suffix="%"
+      :value="parseFloat(disk.use)"
+      :maxValue="100"
+    />
   </fieldset>
 </template>
 
@@ -57,13 +65,13 @@ export default {
   border: 1px solid transparent;
   border-radius: 4px;
   cursor: pointer;
-  background-color: white;
+  background-color: var(--background-color);
   transition: 100ms ease;
 }
 
 .machine legend {
   left: 24px;
-  color: black;
+  color: var(--black);
   text-transform: lowercase;
 }
 

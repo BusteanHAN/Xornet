@@ -28,11 +28,11 @@ export default {
   flex-direction: column;
   text-align: left;
   gap: 8px;
-  color: black;
+  color: var(--black);
   padding: 16px;
   border-radius: 4px;
   cursor: pointer;
-  background-color: white;
+  background-color: var(--background-color);
   transition: 100ms ease;
 }
 
@@ -46,7 +46,7 @@ export default {
 }
 
 .info .title {
-  font-size: 12px;
+  font-size: 11px;
   font-family: inherit;
 }
 
