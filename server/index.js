@@ -102,7 +102,6 @@ io.on("connection", async (socket) => {
   });
 });
 
-
 /**      USER DATABASE HANDLING       */
 
 const User = require("./models/User.js");
@@ -117,9 +116,9 @@ const User = require("./models/User.js");
 async function addUserToDB(id, username, password){
   const users = await User.find({ _id: id}).exec()
   if(users.length !== 0) return console.warn(`[MANGOLIA]: User with uuid '${id}' is already in the database!`);
-  new User({_id: id, username: username, password: password}).save().then(() => console.log(`[MANGOLIA]: User with uuid '${id}' added to the database!`));
+  await new User({_id: id, username: username, password: password}).save(); 
+  console.log(`[MANGOLIA]: User with uuid '${id}' added to the database!`);
 }
-
 
 /**      MACHINE DATABASE HANDLING       */
 
@@ -133,7 +132,8 @@ const Machine = require("./models/Machine.js");
 async function addMachineToDB(static){
   const machines = await Machine.find({ _id: static.system.uuid}).exec()
   if(machines.length !== 0) return console.warn(`[MANGOLIA]: Machine with uuid '${static.system.uuid}' is already in the database!`);
-  new Machine({_id: static.system.uuid, static: static}).save().then(() => console.log(`[MANGOLIA]: Machine with uuid '${static.system.uuid}' added to the database!`));
+  await new Machine({_id: static.system.uuid, static: static}).save();
+  console.log(`[MANGOLIA]: Machine with uuid '${static.system.uuid}' added to the database!`);
 }
 
 
@@ -148,7 +148,8 @@ const Stats = require("./models/Stats.js");
 
 async function addStatsToDB(report){
   const timestamp = new Date().getTime();
-  new Stats({_id: uuidv4(), machine_id: report.uuid, timestamp: timestamp, ram: report.ram, cpu: report.cpu, network: report.network, disks: report.disks}).save().then(() => console.log(`[MANGOLIA]: System with uuid '${report.uuid}' reported stats and they are added to database`));
+  await new Stats({_id: uuidv4(), machine_id: report.uuid, timestamp: timestamp, ram: report.ram, cpu: report.cpu, network: report.network, disks: report.disks}).save();
+  console.log(`[MANGOLIA]: System with uuid '${report.uuid}' reported stats and they are added to database`);
 }
 
 http.listen(port, () => console.log(`Started on port ${port.toString()}`));
