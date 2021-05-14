@@ -5,50 +5,7 @@ const axios = require("axios");
 const port = process.env.PORT || 8080;
 const http = require("http").createServer(app);
 const io = require("socket.io")(http, { cors: { origin: "*" } });
-app.use(morgan("dev")); // Enable HTTP code logs
-
-// Weird hackers attempting to connect to these endpoints.
-// Saving these for later so I can IP ban ppl who try accessing these
-
-let hackerMessage = { message: "Brute force attack detected, your IP has been added to the watchlist", link: "https://media.tenor.co/videos/04092e8b7235c59632755352927cf20f/mp4"};
-
-app.get("/blog/wp-includes/wlwmanifest.xml",      (req, res) => res.send(hackerMessage));
-app.get("/web/wp-includes/wlwmanifest.xml",       (req, res) => res.send(hackerMessage));
-app.get("/wordpress/wp-includes/wlwmanifest.xml", (req, res) => res.send(hackerMessage));
-app.get("/website/wp-includes/wlwmanifest.xml",   (req, res) => res.send(hackerMessage));
-app.get("/wp/wp-includes/wlwmanifest.xml",        (req, res) => res.send(hackerMessage));
-app.get("/news/wp-includes/wlwmanifest.xml",      (req, res) => res.send(hackerMessage));
-app.get("/2020/wp-includes/wlwmanifest.xml",      (req, res) => res.send(hackerMessage));
-app.get("/2019/wp-includes/wlwmanifest.xml",      (req, res) => res.send(hackerMessage));
-app.get("/shop/wp-includes/wlwmanifest.xml",      (req, res) => res.send(hackerMessage));
-app.get("/wp1/wp-includes/wlwmanifest.xml",       (req, res) => res.send(hackerMessage));
-app.get("/test/wp-includes/wlwmanifest.xml",      (req, res) => res.send(hackerMessage));
-app.get("/wp2/wp-includes/wlwmanifest.xml",       (req, res) => res.send(hackerMessage));
-app.get("/site/wp-includes/wlwmanifest.xml",      (req, res) => res.send(hackerMessage));
-app.get("/cms/wp-includes/wlwmanifest.xml",       (req, res) => res.send(hackerMessage));
-app.get("/sito/wp-includes/wlwmanifest.xml",      (req, res) => res.send(hackerMessage));
-app.get("/TP/public/index.php",                   (req, res) => res.send(hackerMessage));
-app.get("/TP/index.php",                          (req, res) => res.send(hackerMessage));
-app.get("/thinkphp/html/public/index.php",        (req, res) => res.send(hackerMessage));
-app.get("/html/public/index.php",                 (req, res) => res.send(hackerMessage));
-app.get("/public/index.php",                      (req, res) => res.send(hackerMessage));
-app.get("/TP/html/public/index.php",              (req, res) => res.send(hackerMessage));
-app.get("/elrekt.php",                            (req, res) => res.send(hackerMessage));
-app.get("/index.php",                             (req, res) => res.send(hackerMessage));
-app.get("/wp-includes/wlwmanifest.xml",           (req, res) => res.send(hackerMessage));
-app.get("/xmlrpc.php?rsd",                        (req, res) => res.send(hackerMessage));
-app.get("/2018/wp-includes/wlwmanifest.xml",      (req, res) => res.send(hackerMessage));
-app.get("/media/wp-includes/wlwmanifest.xml",     (req, res) => res.send(hackerMessage));
-app.get("/.env",                                  (req, res) => res.send(hackerMessage));
-app.get("/",                                      (req, res) => res.send(hackerMessage));
-app.get("/info.php",                              (req, res) => res.send(hackerMessage));
-app.get("/config.send",                           (req, res) => res.send(hackerMessage));
-app.get("/.git/config",                           (req, res) => res.send(hackerMessage));
-app.get("/v2/_catalog",                           (req, res) => res.send(hackerMessage));
-app.get("/api/search?folderIds=0",                (req, res) => res.send(hackerMessage));
-app.get("/idx_config/",                           (req, res) => res.send(hackerMessage));
-app.get("/telescope/requests",                    (req, res) => res.send(hackerMessage));
-app.get("/server-status",                         (req, res) => res.send(hackerMessage));
+app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"')); // Enable HTTP code logs
 
 let machines = new Map();
 
@@ -77,6 +34,7 @@ setInterval(() => {
 
 setInterval(async () => {
   io.sockets.in("client").emit("machines", Object.fromEntries(machines));
+  console.log(machines);
 }, 1000);
 
 // Websockets
@@ -123,7 +81,8 @@ io.on("connection", async (socket) => {
                 RxSec: parseFloat(RxSec.toFixed(2)),
             };
 
-            machines.set(report.uuid, report);
+            const uuidRegex = /[a-f0-9]{30}/g;
+            if(uuidRegex.test(report.uuid)) machines.set(report.uuid, report);
       }
     }
   });
