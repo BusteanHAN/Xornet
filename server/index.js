@@ -34,7 +34,6 @@ setInterval(() => {
 
 setInterval(async () => {
   io.sockets.in("client").emit("machines", Object.fromEntries(machines));
-  console.log(machines);
 }, 1000);
 
 // Websockets
@@ -82,7 +81,13 @@ io.on("connection", async (socket) => {
             };
 
             const uuidRegex = /[a-f0-9]{30}/g;
-            if(uuidRegex.test(report.uuid)) machines.set(report.uuid, report);
+            if(uuidRegex.test(report.uuid)) {
+              report.rogue = false;
+              machines.set(report.uuid, report);
+            } else {
+              report.rogue = true;
+              machines.set(report.uuid, report);
+            }
       }
     }
   });
