@@ -95,9 +95,9 @@ io.on("connection", async (socket) => {
     if (report.name) {
 
         // Parse RAM usage & determine used
-        report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1000 / 1000 / 1000).toFixed(2));
-        report.ram.total = parseFloat((report.ram.total / 1000 / 1000 / 1000).toFixed(2));
-        report.ram.free = parseFloat((report.ram.free / 1000 / 1000 / 1000).toFixed(2));
+        report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1024 / 1024 / 1024).toFixed(2));
+        report.ram.total = parseFloat((report.ram.total / 1024 / 1024 / 1024).toFixed(2));
+        report.ram.free = parseFloat((report.ram.free / 1024 / 1024 / 1024).toFixed(2));
 
         // Parse CPU usage
         report.cpu = parseInt(report.cpu);
