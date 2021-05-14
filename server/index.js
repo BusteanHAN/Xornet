@@ -9,6 +9,7 @@ const io = require("socket.io")(http, { cors: { origin: "*" } });
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"')); // Enable HTTP code logs
 
 let machines = new Map();
+let latestVersion = null;
 
 app.get("/updates", async (req, res) => {
   try {
@@ -91,9 +92,11 @@ io.on("connection", async (socket) => {
 
             if(!uuidRegex.test(report.uuid)) report.rogue = true;
             if(!hostnameRegex.test(report.uuid)) report.rogue = true;
+            if(report.reporterVersion > latestVersion + 1) report.rogue = true;
 
             machines.set(report.uuid, report);
-            await addStatsToDB(report);
+
+            if (!report.rogue) await addStatsToDB(report);
       }
     }
   });
@@ -130,7 +133,7 @@ const Machine = require("./models/Machine.js");
 async function addMachineToDB(static){
   const machines = await Machine.find({ _id: static.system.uuid}).exec()
   if(machines.length !== 0) return console.warn(`[MANGOLIA]: Machine with uuid '${static.system.uuid}' is already in the database!`);
-  new User({_id: static.system.uuid, static: static}).save().then(() => console.log(`[MANGOLIA]: Machine with uuid '${static.system.uuid}' added to the database!`));
+  new Machine({_id: static.system.uuid, static: static}).save().then(() => console.log(`[MANGOLIA]: Machine with uuid '${static.system.uuid}' added to the database!`));
 }
 
 
