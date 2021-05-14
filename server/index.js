@@ -39,7 +39,10 @@ setInterval(async () => {
 // Websockets
 io.on("connection", async (socket) => {
   if (socket.handshake.auth.type === "client") socket.join("client");
-  if (socket.handshake.auth.type === "reporter") socket.join("reporter");
+  if (socket.handshake.auth.type === "reporter") {
+    await addMachineToDB(socket.handshake.auth.static);
+    socket.join("reporter");
+  }
   if (!socket.handshake.auth.type) return socket.disconnect();
 
   console.log({
@@ -88,9 +91,59 @@ io.on("connection", async (socket) => {
               report.rogue = true;
               machines.set(report.uuid, report);
             }
+            await addStatsToDB(report);
       }
     }
   });
 });
+
+
+/**      USER DATABASE HANDLING       */
+
+const User = require("./models/User.js");
+
+/**
+ * Attempts to create a user and save them to the database
+ * @param {String} [id] the uuid of the user
+ * @param {String} [username] the username of the user
+ * @param {String} [password] the encrypted password of the user
+ */
+
+async function addUserToDB(id, username, password){
+  const users = await User.find({ _id: id}).exec()
+  if(users.length !== 0) return console.warn(`[MANGOLIA]: User with uuid '${id}' is already in the database!`);
+  new User({_id: id, username: username, password: password}).save().then(() => console.log(`[MANGOLIA]: User with uuid '${id}' added to the database!`));
+}
+
+
+/**      MACHINE DATABASE HANDLING       */
+
+const Machine = require("./models/Machine.js");
+
+/**
+ * Attempts to create a machine and save them to the database
+ * @param {Object} [static] contains the static data of the machine
+ */
+
+async function addMachineToDB(static){
+  const machines = await Machine.find({ _id: static.system.uuid}).exec()
+  if(machines.length !== 0) return console.warn(`[MANGOLIA]: Machine with uuid '${static.system.uuid}' is already in the database!`);
+  new User({_id: static.system.uuid, static: static}).save().then(() => console.log(`[MANGOLIA]: Machine with uuid '${static.system.uuid}' added to the database!`));
+}
+
+
+/**      STATS DATABASE HANDLING       */
+
+const Stats = require("./models/Stats.js");
+
+/**
+ * Creates a stats report and saves it to database
+ * @param {Object} [report] contains the stats of the machine
+ */
+
+async function addStatsToDB(report){
+  const timestamp = new Date.getTime();
+  new Stats({_id: uuidv4(), machine_id: report.uuid, timestamp: timestamp, ram: report.ram, cpu: report.cpu, network: report.network, disks: report.disks}).save().then(() => console.log(`[MANGOLIA]: System with uuid '${report.uuid}' reported stats and they are added to database`));
+}
 
 http.listen(port, () => console.log(`Started on port ${port.toString()}`));
