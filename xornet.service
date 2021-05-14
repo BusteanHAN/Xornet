@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=$USER
-ExecStart=/etc/xornet/xornet-reporter-v0.09.bin.09
+ExecStart=/etc/xornet/xornet-reporter.bin
 
 [Install]
 WantedBy=multi-user.target
