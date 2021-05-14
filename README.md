@@ -6,5 +6,10 @@ We are XORNET this is a fun little project started by @Geoxor for people who hav
 # Reporter
 The reporter is the main binary app that you can easily download and install on your VMs or servers, it takes care of reporting system information to http://xornet.cloud and its lightweight!
 
+It works on the following operating systems:
+  - Debian
+  - Raspbian
+  - Windows 10
+
 # Disclaimer
 We don't know how to code, if you get hacked, its your fault for not committing.
