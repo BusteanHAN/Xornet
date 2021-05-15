@@ -22,7 +22,7 @@ app.get("/updates", async (req, res) => {
       downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`,
     });
   } catch (error) {
-    latestVersion = 0.11;
+    latestVersion = 0.12;
     res.json({
       latestVersion,
       downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`,
@@ -36,6 +36,7 @@ setInterval(() => {
 
 setInterval(async () => {
   io.sockets.in("client").emit("machines", Object.fromEntries(machines));
+  io.sockets.in('reporter').emit('heartbeat', Date.now());
 }, 1000);
 
 function formatSeconds(seconds) {
@@ -64,14 +65,25 @@ io.on("connection", async (socket) => {
     // name: socket.handshake.auth.static.os.hostname,
   });
 
+  // Calculate ping and append it to the machine map
+  socket.on('heartbeatResponse', heartbeat => {
+    let machine = machines.get(heartbeat.uuid);
+    if (!machine) return;
+    machine.ping = Date.now() - heartbeat.epoch;
+    machines.set(heartbeat.uuid, machine)
+  });
+
+  // Parse reports
   socket.on("report", async (report) => {
     if(report.name) {
 
       report.rogue = false;
 
+
       // Add geolocation data
       report.geolocation = socket.handshake.auth.static.geolocation;
       if(report.geolocation && report.geolocation.ip) delete report.geolocation.ip;
+      // console.log(report.geolocation.country);
 
       // Parse RAM usage & determine used
       report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1024 / 1024 / 1024).toFixed(2));
@@ -86,9 +98,6 @@ io.on("connection", async (socket) => {
 
       // Remove dashes from UUID
       report.uuid = report.uuid.replace(/-/g, "");
-
-      report.ping = Date.now() - report.createdAt;
-      console.log(report.ping);
 
       if (Array.isArray(report.network)) {
         // Clear out null interfaces
@@ -108,15 +117,18 @@ io.on("connection", async (socket) => {
             RxSec: parseFloat(RxSec.toFixed(2)),
         };
 
-        const uuidRegex = /[a-f0-9]{30}/g;
+        const uuidRegex = /[a-f0-9]{32}/g;
         const hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]))*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
 
-        if(!uuidRegex.test(report.uuid) || !report.uuid.length == 30) report.rogue = true;
-        if(!hostnameRegex.test(report.name)) report.rogue = true;
+        // Validators
+        if(!uuidRegex.test(report.uuid)) report.rogue = true;
+        if(!hostnameRegex.test(report.name) || report.uuid.length !== 32) report.rogue = true;
         if(report.reporterVersion > latestVersion + 1) report.rogue = true;
-
+  
+        // Add to ram
         machines.set(report.uuid, report);
 
+        // Add to database
         if (!report.rogue) await addStatsToDB(report);
       }
     }
