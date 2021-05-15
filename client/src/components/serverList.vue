@@ -12,6 +12,9 @@
             <div class="button" @click="toggleDarkmode()">
                 <img :src="require('@/assets/icons/darkmode.png')" alt="">
             </div>
+            <div class="button" @click="showRogues = !showRogues" :class="{enabled: showRogues}">
+                <img :src="require('@/assets/icons/rogue.svg')" alt="">
+            </div>
             <div class="button" @click="thinButtons = false">
                 <img :src="require('@/assets/icons/thick.png')" alt="">
             </div>
@@ -29,17 +32,18 @@
     </section>
 
     <div class="list">
-        <serverListButton :thin="thinButtons" :showDetails="!isSmall" :machine="pm" v-for="pm of pms" :key="pm"/>
+        <serverListButton :thin="thinButtons" :showDetails="!isSmall" :machine="pm" v-for="pm of showRogues ? pms : pms.filter(pm => !pm.rogue)" :key="pm"/>
     </div>
 
     <section v-if="!thinButtons">
         <img :src="require('@/assets/icons/vm-small.png')" alt="">
         <h1>Virtual Machines</h1>
     </section>
+
     <div class="list">
-        <serverListButton :thin="thinButtons" :showDetails="!isSmall" :machine="vm" v-for="vm of vms" :key="vm"/>
+        <serverListButton :thin="thinButtons" :showDetails="!isSmall" :machine="vm" v-for="vm of showRogues ? vms : vms.filter(vm => !vm.rogue)" :key="vm"/>
     </div>
-   
+
   </nav>
 </template>
 
@@ -57,6 +61,7 @@ export default {
     data: () => {
         return {
             thinButtons: false,
+            showRogues: true,
             darkmode: false,
         }
     },
@@ -81,6 +86,9 @@ export default {
                 document.documentElement.style.setProperty('--white', '#161b22');
                 document.documentElement.style.setProperty('--black', '#fff');
                 document.documentElement.style.setProperty('--slyColor', '#fff');
+                document.documentElement.style.setProperty('--rogue-red', '#2d0000');
+                document.documentElement.style.setProperty('--rogue-red-border', '#870000');
+                document.documentElement.style.setProperty('--rogue-red-active', '#480000');
                 document.documentElement.style.setProperty('--filter', 1);
                 this.darkmode = true;
             } else {
@@ -88,6 +96,9 @@ export default {
                 document.documentElement.style.setProperty('--white', '#f6f6f6');
                 document.documentElement.style.setProperty('--black', '#000');
                 document.documentElement.style.setProperty('--slyColor', '#414569');
+                document.documentElement.style.setProperty('--rogue-red', '#ffb1b1');
+                document.documentElement.style.setProperty('--rogue-red-border', '#ff0000');
+                document.documentElement.style.setProperty('--rogue-red-active', '#ff9999');
                 document.documentElement.style.setProperty('--filter', 0);
                 this.darkmode = false;
             }
@@ -151,6 +162,9 @@ export default {
 
 .serverList .heading .buttons .button:active {
     transform: translateY(-0px);
+}
+.serverList .heading .buttons .button.enabled {
+    background-color: var(--rogue-red-border);
 }
 
 .serverList .heading .buttons .button img {
