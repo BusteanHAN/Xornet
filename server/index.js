@@ -45,7 +45,7 @@ function formatSeconds(seconds) {
   if(!seconds) return undefined;
   seconds = Number(seconds);
   var d = Math.floor(seconds / 86400);
-  var h = Math.floor(seconds & 86400 / 3600);
+  var h = Math.floor(seconds / 3600 % 24);
   var m = Math.floor(seconds % 3600 / 60);
   var s = Math.floor(seconds % 3600 % 60);
  
