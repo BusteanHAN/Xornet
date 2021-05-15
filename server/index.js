@@ -65,12 +65,13 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("report", async (report) => {
-    if (report.name) {
+    if(report.name) {
 
       report.rogue = false;
 
       // Add geolocation data
       report.geolocation = socket.handshake.auth.static.geolocation;
+      if(report.geolocation && report.geolocation.ip) delete report.geolocation.ip;
 
       // Parse RAM usage & determine used
       report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1024 / 1024 / 1024).toFixed(2));
