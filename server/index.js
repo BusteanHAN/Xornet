@@ -56,47 +56,47 @@ io.on("connection", async (socket) => {
   socket.on("report", async (report) => {
     if (report.name) {
 
-        report.rogue = false;
+      report.rogue = false;
 
-        // Parse RAM usage & determine used
-        report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1024 / 1024 / 1024).toFixed(2));
-        report.ram.total = parseFloat((report.ram.total / 1024 / 1024 / 1024).toFixed(2));
-        report.ram.free = parseFloat((report.ram.free / 1024 / 1024 / 1024).toFixed(2));
+      // Parse RAM usage & determine used
+      report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1024 / 1024 / 1024).toFixed(2));
+      report.ram.total = parseFloat((report.ram.total / 1024 / 1024 / 1024).toFixed(2));
+      report.ram.free = parseFloat((report.ram.free / 1024 / 1024 / 1024).toFixed(2));
 
-        // Parse CPU usage
-        report.cpu = parseInt(report.cpu);
+      // Parse CPU usage
+      report.cpu = parseInt(report.cpu);
 
-        // Remove dashes from UUID
-        report.uuid = report.uuid.replace(/-/g, "");
+      // Remove dashes from UUID
+      report.uuid = report.uuid.replace(/-/g, "");
 
-        if (Array.isArray(report.network)) {
-            // Clear out null interfaces
-            report.network = report.network.filter((iface) => iface.tx_sec !== null && iface.rx_sec !== null);
-            
-            // Get total network interfaces
-            totalInterfaces = report.network.length;
+      if (Array.isArray(report.network)) {
+        // Clear out null interfaces
+        report.network = report.network.filter((iface) => iface.tx_sec !== null && iface.rx_sec !== null);
+        
+        // Get total network interfaces
+        totalInterfaces = report.network.length;
 
-            // Combine all bandwidth together
-            let TxSec = (report.network.reduce((a, b) => a + b.tx_sec, 0) * 8) / 1000 / 1000;
-            let RxSec = (report.network.reduce((a, b) => a + b.rx_sec, 0) * 8) / 1000 / 1000;
+        // Combine all bandwidth together
+        let TxSec = (report.network.reduce((a, b) => a + b.tx_sec, 0) * 8) / 1000 / 1000;
+        let RxSec = (report.network.reduce((a, b) => a + b.rx_sec, 0) * 8) / 1000 / 1000;
 
-            // Replace whats there with proper data
-            report.network = {
-                totalInterfaces,
-                TxSec: parseFloat(TxSec.toFixed(2)),
-                RxSec: parseFloat(RxSec.toFixed(2)),
-            };
+        // Replace whats there with proper data
+        report.network = {
+            totalInterfaces,
+            TxSec: parseFloat(TxSec.toFixed(2)),
+            RxSec: parseFloat(RxSec.toFixed(2)),
+        };
 
-            const uuidRegex = /[a-f0-9]{30}/g;
-            const hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]))*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
+        const uuidRegex = /[a-f0-9]{30}/g;
+        const hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]))*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/;
 
-            if(!uuidRegex.test(report.uuid)) report.rogue = true;
-            if(!hostnameRegex.test(report.uuid)) report.rogue = true;
-            if(report.reporterVersion > latestVersion + 1) report.rogue = true;
+        if(!uuidRegex.test(report.uuid) || !report.uuid.length == 30) report.rogue = true;
+        if(!hostnameRegex.test(report.name)) report.rogue = true;
+        if(report.reporterVersion > latestVersion + 1) report.rogue = true;
 
-            machines.set(report.uuid, report);
+        machines.set(report.uuid, report);
 
-            if (!report.rogue) await addStatsToDB(report);
+        if (!report.rogue) await addStatsToDB(report);
       }
     }
   });
