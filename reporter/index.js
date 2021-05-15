@@ -162,7 +162,6 @@ async function getStats() {
     reporterVersion: version,
     disks: await getDiskInfo(),
     uptime: os.uptime(),
-    createdAt: Date.now(),
   };
   return stats;
 }
@@ -195,7 +194,6 @@ async function connectToXornet() {
 
   socket.on("connect", async () => {
     console.log("[CONNECTED]".bgGreen.black + ` Connected to ${backend.green}`);
-    socket.emit("identity", static.system.uuid);
     emitter = setInterval(function () {
       socket.emit("report", statistics);
     }, 1000);
@@ -204,6 +202,14 @@ async function connectToXornet() {
   socket.on("disconnect", async () => {
     console.log("[WARN]".bgYellow.black + ` Disconnected from ${backend}`);
     clearInterval(emitter);
+  });
+
+  // Get a heartbeat from the backend and send a heartbeat response back with UUID
+  socket.on("heartbeat", async (epoch) => {
+    socket.emit("heartbeatResponse", {
+      uuid: static.system.uuid,
+      epoch,
+    });
   });
 }
 
