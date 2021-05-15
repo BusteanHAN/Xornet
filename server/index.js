@@ -9,6 +9,8 @@ const io = require("socket.io")(http, { cors: { origin: "*" } });
 app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"')); // Enable HTTP code logs
 
 let machines = new Map();
+let machinesPings = new Map();
+
 let latestVersion = null;
 
 app.get("/updates", async (req, res) => {
@@ -66,12 +68,7 @@ io.on("connection", async (socket) => {
   });
 
   // Calculate ping and append it to the machine map
-  socket.on('heartbeatResponse', heartbeat => {
-    let machine = machines.get(heartbeat.uuid);
-    if (!machine) return;
-    machine.ping = Date.now() - heartbeat.epoch;
-    machines.set(heartbeat.uuid, machine)
-  });
+  socket.on('heartbeatResponse', heartbeat => machinesPings.set(heartbeat.uuid, Math.ceil((Date.now() - heartbeat.epoch) / 2)));
 
   // Parse reports
   socket.on("report", async (report) => {
@@ -92,6 +89,9 @@ io.on("connection", async (socket) => {
 
       // Parse uptime 
       report.uptime = formatSeconds(report.uptime);
+
+      // Append Ping from ping buffer
+      report.ping = machinesPings.get(report.uuid);
 
       // Parse CPU usage
       report.cpu = parseInt(report.cpu);
