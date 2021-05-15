@@ -107,6 +107,17 @@ async function deleteOldVersion(oldVersion) {
   });
 }
 
+async function getLocation() {
+  console.log("[INFO]".bgCyan.black + ` Fetching geolocation...`);
+  location = (await axios.get(`http://ipwhois.app/json/`)).data;
+  return {
+    ip: location.ip,
+    location: location.country,
+    countryCode: location.country_code,
+    isp: location.isp,
+  };
+}
+
 async function getDiskInfo() {
   info = {};
   let disks = await si.fsSize();
@@ -150,6 +161,7 @@ async function getStats() {
     network: data.networkStats,
     reporterVersion: version,
     disks: await getDiskInfo(),
+    uptime: os.uptime(),
   };
 
   return stats;
@@ -158,6 +170,7 @@ async function getStats() {
 async function connectToXornet() {
   console.log("[INFO]".bgCyan.black + " Fetching system information...");
   static = await si.getStaticData();
+  static.geolocation = await getLocation();
   static.system.uuid = static.system.uuid.replace(/-/g, "");
   console.log(
     "[INFO]".bgCyan.black + " System information collection finished"
