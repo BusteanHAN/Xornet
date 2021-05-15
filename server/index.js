@@ -11,7 +11,7 @@ app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:htt
 let machines = new Map();
 let machinesPings = new Map();
 
-let latestVersion = null;
+let latestVersion = 0.12;
 
 app.get("/updates", async (req, res) => {
   try {
@@ -24,7 +24,6 @@ app.get("/updates", async (req, res) => {
       downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`,
     });
   } catch (error) {
-    latestVersion = 0.12;
     res.json({
       latestVersion,
       downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`,
@@ -123,7 +122,7 @@ io.on("connection", async (socket) => {
         // Validators
         if(!uuidRegex.test(report.uuid)) report.rogue = true;
         if(!hostnameRegex.test(report.name) || report.uuid.length !== 32) report.rogue = true;
-        if(report.reporterVersion > latestVersion + 1) report.rogue = true;
+        if(report.reporterVersion > latestVersion + 0.01) report.rogue = true;
   
         // Add to ram
         machines.set(report.uuid, report);
