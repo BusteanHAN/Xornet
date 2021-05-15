@@ -36,6 +36,7 @@ setInterval(() => {
 
 setInterval(async () => {
   io.sockets.in("client").emit("machines", Object.fromEntries(machines));
+  io.sockets.in('reporter').emit('heartbeat', Date.now());
 }, 1000);
 
 function formatSeconds(seconds) {
@@ -64,6 +65,15 @@ io.on("connection", async (socket) => {
     // name: socket.handshake.auth.static.os.hostname,
   });
 
+  // Calculate ping and append it to the machine map
+  socket.on('heartbeatResponse', heartbeat => {
+    let machine = machines.get(heartbeat.uuid);
+    if (!machine) return;
+    machine.ping = Date.now() - heartbeat.epoch;
+    machines.set(heartbeat.uuid, machine)
+  });
+
+  // Parse reports
   socket.on("report", async (report) => {
     if(report.name) {
 
@@ -88,9 +98,6 @@ io.on("connection", async (socket) => {
 
       // Remove dashes from UUID
       report.uuid = report.uuid.replace(/-/g, "");
-
-      report.ping = Date.now() - report.createdAt;
-      console.log(report.ping);
 
       if (Array.isArray(report.network)) {
         // Clear out null interfaces
