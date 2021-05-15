@@ -6,7 +6,7 @@ const fs = require("fs");
 const ProgressBar = require("progress");
 require("colors");
 
-const version = 0.14;
+const version = 0.13;
 const logo = [
   "    __  __      _____ \n",
   "\\_//  \\|__)|\\ ||_  |  \n",
