@@ -87,6 +87,9 @@ io.on("connection", async (socket) => {
       // Remove dashes from UUID
       report.uuid = report.uuid.replace(/-/g, "");
 
+      report.ping = Date.now() - report.createdAt;
+      console.log(report.ping);
+
       if (Array.isArray(report.network)) {
         // Clear out null interfaces
         report.network = report.network.filter((iface) => iface.tx_sec !== null && iface.rx_sec !== null);

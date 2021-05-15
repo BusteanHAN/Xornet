@@ -6,7 +6,7 @@ const fs = require("fs");
 const ProgressBar = require("progress");
 require("colors");
 
-const version = 0.12;
+const version = 0.13;
 const logo = [
   "    __  __      _____ \n",
   "\\_//  \\|__)|\\ ||_  |  \n",
@@ -162,8 +162,8 @@ async function getStats() {
     reporterVersion: version,
     disks: await getDiskInfo(),
     uptime: os.uptime(),
+    createdAt: Date.now(),
   };
-
   return stats;
 }
 
