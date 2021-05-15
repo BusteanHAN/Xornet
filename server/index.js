@@ -38,6 +38,17 @@ setInterval(async () => {
   io.sockets.in("client").emit("machines", Object.fromEntries(machines));
 }, 1000);
 
+function formatSeconds(seconds) {
+  if(!seconds) return undefined;
+  seconds = Number(seconds);
+  var d = Math.floor(seconds / 86400);
+  var h = Math.floor(seconds & 86400 / 3600);
+  var m = Math.floor(seconds % 3600 / 60);
+  var s = Math.floor(seconds % 3600 % 60);
+ 
+  return `${d}d ${h}h ${m}m ${s}s`
+}
+
 // Websockets
 io.on("connection", async (socket) => {
   if (socket.handshake.auth.type === "client") socket.join("client");
@@ -58,10 +69,16 @@ io.on("connection", async (socket) => {
 
       report.rogue = false;
 
+      // Add geolocation data
+      report.geolocation = socket.handshake.auth.static.geolocation;
+
       // Parse RAM usage & determine used
       report.ram.used = parseFloat(((report.ram.total - report.ram.free) / 1024 / 1024 / 1024).toFixed(2));
       report.ram.total = parseFloat((report.ram.total / 1024 / 1024 / 1024).toFixed(2));
       report.ram.free = parseFloat((report.ram.free / 1024 / 1024 / 1024).toFixed(2));
+
+      // Parse uptime 
+      report.uptime = formatSeconds(report.uptime);
 
       // Parse CPU usage
       report.cpu = parseInt(report.cpu);
