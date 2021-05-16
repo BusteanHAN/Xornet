@@ -6,6 +6,9 @@ We are XORNET this is a fun little project started by @Geoxor for people who hav
 Heres the discord server for you to join
 https://discord.gg/geoxor
 
+Figma:
+https://www.figma.com/file/dURFohUnUHXzgO8lSd53jO/Xornet
+
 # Reporter
 The reporter is the main binary app that you can easily download and install on your VMs or servers, it takes care of reporting system information to http://xornet.cloud and its lightweight!
 
@@ -21,11 +24,6 @@ The reporter can be run using node.js at least on:
   - Raspbian
   - Windows 10
   - Windows Server 2019
- 
-# TODO
-- Updater for Reporter (using Electron)
-- Figure out why the front-end lags
-- Comment the code since people are actually forking the code
   
 # Disclaimer
 We don't know how to code, if you get hacked, its your fault for not committing.
