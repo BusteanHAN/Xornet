@@ -25,10 +25,10 @@ int main(void)
     // }
 
     //RAM THROUGH OBJECT TEST
-    // while (1)
-    // {
-    //     mySystem.update();
-    //     cout << (uint64_t)mySystem.getFreeRam() << endl;
-    //     Sleep(500);
-    // }
+    while (1)
+    {
+        mySystem.update();
+        cout << (uint64_t)mySystem.getFreeRam() << endl;
+        Sleep(500);
+    }
 }
