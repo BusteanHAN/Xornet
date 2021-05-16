@@ -23,6 +23,8 @@ const logo = [
 
 console.log(logo.join("").rainbow);
 
+const reporterStartTime = Date.now();
+
 let static = {};
 
 function getSystemExtension() {
@@ -153,7 +155,7 @@ async function getStats() {
   }
 
   let stats = {
-    uuid: uuid,
+        uuid: uuid,
     isVirtual: static.system.virtual,
     hostname,
     platform,
@@ -166,6 +168,7 @@ async function getStats() {
     reporterVersion: version,
     disks: await getDiskInfo(),
     uptime: os.uptime(),
+    reporterUptime: Date.now() - reporterStartTime,
     timestamp: Date.now(),
   };
   return stats;

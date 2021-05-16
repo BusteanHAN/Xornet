@@ -181,7 +181,7 @@ const Stats = require("./models/Stats.js");
 async function addStatsToDB(report){
   const timestamp = new Date().getTime();
   await new Stats({_id: uuidv4(), machine_id: report.uuid, timestamp: timestamp, ram: report.ram, cpu: report.cpu, network: report.network, disks: report.disks}).save();
-  console.log(`[MANGOLIA]: System with uuid '${report.uuid}' reported stats and they are added to database`);
+  // console.log(`[MANGOLIA]: System with uuid '${report.uuid}' reported stats and they are added to database`);
 }
 
 http.listen(port, () => console.log(`Started on port ${port.toString()}`));
