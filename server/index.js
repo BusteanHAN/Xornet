@@ -87,7 +87,10 @@ io.on("connection", async (socket) => {
       report.ram.free = parseFloat((report.ram.free / 1024 / 1024 / 1024).toFixed(2));
 
       // Parse uptime 
-      report.uptime = formatSeconds(report.uptime);
+      report.uptime = {
+        pure: report.uptime,
+        formatted: formatSeconds(report.uptime),
+      };
 
       // Append Ping from ping buffer
       report.ping = machinesPings.get(report.uuid);
