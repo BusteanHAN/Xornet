@@ -23,7 +23,7 @@ The reporter can be run using node.js at least on:
   - Windows Server 2019
  
 # TODO
-- Updater for Reporter (using Electron)
+- Pretty updater for Reporter (using Electron) with a nice UI for Windows
 - Figure out why the front-end lags
 - Comment the code since people are actually forking the code
 - Fix width of column titles on taskmanager because the chevron conflicts the adjescent divs
