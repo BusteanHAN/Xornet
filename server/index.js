@@ -71,6 +71,7 @@ io.on("connection", async (socket) => {
 
   // Parse reports
   socket.on("report", async (report) => {
+    if (!report.ram) return;
     report.rogue = false;
 
     // Add geolocation data
