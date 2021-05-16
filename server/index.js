@@ -11,7 +11,7 @@ app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:htt
 let machines = new Map();
 let machinesPings = new Map();
 
-let latestVersion = 0.12;
+let latestVersion = 0.14;
 
 app.get("/updates", async (req, res) => {
   try {
@@ -21,12 +21,12 @@ app.get("/updates", async (req, res) => {
     latestVersion = parseFloat(data[0].tag_name.replace("v", ""));
     res.json({
       latestVersion,
-      downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`,
+      downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v0.12/xornet-reporter-v0.12`,
     });
   } catch (error) {
     res.json({
       latestVersion,
-      downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v${latestVersion}/xornet-reporter-v${latestVersion}`,
+      downloadLink: `https://github.com/Geoxor/Xornet/releases/download/v0.12/xornet-reporter-v0.12`,
     });
   }
 });

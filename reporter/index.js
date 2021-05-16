@@ -39,21 +39,7 @@ function getSystemExtension() {
 async function checkForUpdates() {
   console.log("[INFO]".bgCyan.black + ` Checking for updates`);
   try {
-    const update = (await axios.get("http://backend.xornet.cloud/updates"))
-      .data;
-    if (version < update.latestVersion) {
-      console.log(
-        "[INFO]".bgCyan.black +
-          ` Downloading new update v${update.latestVersion}`
-      );
-      await downloadUpdate(update.downloadLink + getSystemExtension());
-      console.log("[INFO]".bgCyan.black + ` Download complete`);
-      await deleteOldVersion(version);
-      console.log("[INFO]".bgCyan.black + ` Update finished`);
-    } else {
-      console.log("[INFO]".bgCyan.black + ` No updates found`);
-      connectToXornet();
-    }
+    var update = (await axios.get("http://backend.xornet.cloud/updates")).data;
   } catch (error) {
     if (error) {
       console.log(error);
@@ -69,6 +55,23 @@ async function checkForUpdates() {
       console.log("[INFO]".bgCyan.black + ` UUID: ${static.system.uuid}`.cyan);
       connectToXornet();
     }
+  }
+  if (os.platform() == "win32"){
+    if (version < update.latestVersion) {
+      console.log(
+        "[INFO]".bgCyan.black +
+          ` Downloading new update v${update.latestVersion}`
+      );
+      await downloadUpdate(update.downloadLink + getSystemExtension());
+      console.log("[INFO]".bgCyan.black + ` Update finished`);
+    } else {
+      console.log("[INFO]".bgCyan.black + ` No updates found`);
+      connectToXornet();
+    }
+  } else if (os.platform() == 'linux') {
+    console.log("[UPDATE MESSAGE]".bgGreen.black + ` please run this command to update manually` + `'wget https://github.com/Geoxor/Xornet/releases/download/v${update.latestVersion}/install.sh && chmod +x ./install.sh && sudo ./install.sh'`.green);
+  } else {
+    connectToXornet();
   }
 }
 
@@ -105,15 +108,6 @@ async function downloadUpdate(downloadLink) {
   return new Promise((resolve, reject) => {
     writer.on("finish", resolve);
     writer.on("error", reject);
-  });
-}
-
-async function deleteOldVersion(oldVersion) {
-  return new Promise((resolve) => {
-    fs.unlink(`./xornet-reporter-v${oldVersion}${getSystemExtension()}`, () => {
-      console.log(`Deleted old version`);
-      resolve();
-    });
   });
 }
 
