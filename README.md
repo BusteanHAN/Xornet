@@ -6,6 +6,9 @@ We are XORNET this is a fun little project started by @Geoxor for people who hav
 Heres the discord server for you to join
 https://discord.gg/geoxor
 
+Figma:
+https://www.figma.com/file/dURFohUnUHXzgO8lSd53jO/Xornet
+
 # Reporter
 The reporter is the main binary app that you can easily download and install on your VMs or servers, it takes care of reporting system information to http://xornet.cloud and its lightweight!
 
@@ -34,6 +37,7 @@ The reporter can be run using node.js at least on:
 - Match the rogue colors to GitHubs red colors since thats what color pallete we use as reference for darkmode
 - Make it so when machines disconnect they get grayscaled and marked as disconnected on the frontend taskmanager and add an option to hide disconnected machines just like rogues
 - Figure out how to properly implement chart.js with vue so we dont have to force refresh/recreate the entire graph from scratch (vue-chart.js doesn't work due to us using Vue 3 whereas vue-chart.js works only with Vue 2)
+- Perhaps code a C/C#/C++ version of the reporter for Windows since the current reporter uses way too much CPU on Windows
   
 # Disclaimer
 We don't know how to code, if you get hacked, its your fault for not committing.
