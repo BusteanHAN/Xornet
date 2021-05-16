@@ -8,11 +8,20 @@ require("colors");
 
 const version = 0.13;
 const logo = [
-  "    __  __      _____ \n",
-  "\\_//  \\|__)|\\ ||_  |  \n",
-  `/ \\\\__/| \\ | \\||__ |  ${version}\n`,
+  '     ___           ___           ___           ___           ___           ___     \n',
+  '    |\\__\\         /\\  \\         /\\  \\         /\\__\\         /\\  \\         /\\  \\    \n',
+  '    |:|  |       /::\\  \\       /::\\  \\       /::|  |       /::\\  \\        \\:\\  \\   \n',
+  '    |:|  |      /:/\\:\\  \\     /:/\\:\\  \\     /:|:|  |      /:/\\:\\  \\        \\:\\  \\  \n',
+  '    |:|__|__   /:/  \\:\\  \\   /::\\~\\:\\  \\   /:/|:|  |__   /::\\~\\:\\  \\       /::\\  \\ \n',
+  '____/::::\\__\\ /:/__/ \\:\\__\\ /:/\\:\\ \\:\\__\\ /:/ |:| /\\__\\ /:/\\:\\ \\:\\__\\     /:/\\:\\__\\\n',
+  '\\::::/~~/~    \\:\\  \\ /:/  / \\/_|::\\/:/  / \\/__|:|/:/  / \\:\\~\\:\\ \\/__/    /:/  \\/__/\n',
+  ' ~~|:|~~|      \\:\\  /:/  /     |:|::/  /      |:/:/  /   \\:\\ \\:\\__\\     /:/  /     \n',
+  '   |:|  |       \\:\\/:/  /      |:|\\/__/       |::/  /     \\:\\ \\/__/     \\/__/      \n',
+  '   |:|  |        \\::/  /       |:|  |         /:/  /       \\:\\__\\                  \n',
+  `    \\|__|         \\/__/         \\|__|         \\/__/         \\/__/             v${version}\n`,
 ];
-console.log(logo.join("").magenta);
+
+console.log(logo.join("").rainbow);
 
 let static = {};
 
@@ -57,6 +66,7 @@ async function checkForUpdates() {
         "[WARN]".bgYellow.black + ` Backend server is offline, skipping update`
       );
       console.log("[INFO]".bgCyan.black + ` Waiting for backend to connect...`);
+      console.log("[INFO]".bgCyan.black + ` UUID: ${static.system.uuid}`.cyan);
       connectToXornet();
     }
   }
@@ -108,7 +118,6 @@ async function deleteOldVersion(oldVersion) {
 }
 
 async function getLocation() {
-  console.log("[INFO]".bgCyan.black + ` Fetching geolocation...`);
   location = (await axios.get(`http://ipwhois.app/json/`)).data;
   return {
     ip: location.ip,
@@ -162,18 +171,27 @@ async function getStats() {
     reporterVersion: version,
     disks: await getDiskInfo(),
     uptime: os.uptime(),
+    timestamp: Date.now(),
   };
   return stats;
 }
 
 async function connectToXornet() {
   console.log("[INFO]".bgCyan.black + " Fetching system information...");
+
+  console.log("[INFO]".bgCyan.black + ` Fetching static data...`);
   static = await si.getStaticData();
+  console.log("[INFO]".bgCyan.black + ` Static data collected`.green);
+
+  console.log("[INFO]".bgCyan.black + ` Fetching geolocation...`);
   static.geolocation = await getLocation();
+  console.log("[INFO]".bgCyan.black + ` Geolocation collected`.green);
+
+  console.log("[INFO]".bgCyan.black + ` Parsing UUID...`);
   static.system.uuid = static.system.uuid.replace(/-/g, "");
-  console.log(
-    "[INFO]".bgCyan.black + " System information collection finished"
-  );
+  console.log("[INFO]".bgCyan.black + ` Assigning system UUID to ${static.system.uuid.cyan}`.green);
+
+  console.log("[INFO]".bgCyan.black + " System information collection finished".green);
 
   const backend = "ws://backend.xornet.cloud";
   let socket = io.connect(backend, {
@@ -194,7 +212,9 @@ async function connectToXornet() {
 
   socket.on("connect", async () => {
     console.log("[CONNECTED]".bgGreen.black + ` Connected to ${backend.green}`);
+    
     emitter = setInterval(function () {
+      console.log("[INFO]".bgCyan.black + ` Sending Stats - ${Date.now()}`.cyan);
       socket.emit("report", statistics);
     }, 1000);
   });
