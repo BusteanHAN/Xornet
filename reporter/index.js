@@ -131,7 +131,7 @@ async function getDiskInfo() {
 }
 
 async function getStats() {
-  const name = os.hostname();
+  const hostname = os.hostname();
   const platform = os.platform();
 
   valueObject = {
@@ -151,7 +151,7 @@ async function getStats() {
   let stats = {
     uuid: uuid,
     isVirtual: static.system.virtual,
-    name,
+    hostname,
     platform,
     ram: {
       total: os.totalmem(),

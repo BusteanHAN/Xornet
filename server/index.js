@@ -63,7 +63,7 @@ io.on("connection", async (socket) => {
   console.log({
     type: socket.handshake.auth.type,
     uuid: socket.handshake.auth.uuid,
-    // name: socket.handshake.auth.static.os.hostname,
+    // hostname: socket.handshake.auth.static.os.hostname,
   });
 
   // Calculate ping and append it to the machine map
@@ -71,10 +71,9 @@ io.on("connection", async (socket) => {
 
   // Parse reports
   socket.on("report", async (report) => {
-    if(report.name) {
+    if(report.hostname) {
 
       report.rogue = false;
-
 
       // Add geolocation data
       report.geolocation = socket.handshake.auth.static.geolocation;
@@ -126,7 +125,7 @@ io.on("connection", async (socket) => {
         if(!uuidRegex.test(report.uuid)) report.rogue = true;
         if(!hostnameRegex.test(report.name) || report.uuid.length !== 32) report.rogue = true;
         if(report.reporterVersion > latestVersion + 0.01) report.rogue = true;
-  
+        if(report.hostname == "") report.rogue = true;
         // Add to ram
         machines.set(report.uuid, report);
 
