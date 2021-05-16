@@ -38,8 +38,8 @@ function getSystemExtension() {
 
 async function checkForUpdates() {
   console.log("[INFO]".bgCyan.black + ` Checking for updates`);
-  try {
-    var update = (await axios.get("http://backend.xornet.cloud/updates")).data;
+    try {
+    var update = parseFloat((await axios.get("https://api.github.com/repos/Geoxor/Xornet/releases")).data[0].tag_name.replace("v", ""));
   } catch (error) {
     if (error) {
       console.log(error);
@@ -70,6 +70,7 @@ async function checkForUpdates() {
     }
   } else if (os.platform() == 'linux') {
     console.log("[UPDATE MESSAGE]".bgGreen.black + ` please run this command to update manually` + `'wget https://github.com/Geoxor/Xornet/releases/download/v${update.latestVersion}/install.sh && chmod +x ./install.sh && sudo ./install.sh'`.green);
+    connectToXornet();
   } else {
     connectToXornet();
   }
