@@ -1,5 +1,6 @@
 #include "cpuUsage.h"
 #include "memUsage.h"
+#include "networkInfo.h"
 #include "systemInfo.h"
 #include <iostream>
 
@@ -17,4 +18,5 @@ void systemInfo::update()
     cpuUsage = cpuusage(); //value from 0 - 100 %
     totalRam = querySM(0); //in bytes
     freeRam = querySM(1);
+    PCName = queryPCName();
 }
