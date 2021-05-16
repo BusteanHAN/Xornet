@@ -18,6 +18,11 @@ The reporter can be run using node.js at least on:
   - Raspbian
   - Windows 10
   - Windows Server 2019
+ 
+# TODO
+- Updater for Reporter (using Electron)
+- Figure out why the front-end lags
+- Comment the code since people are actually forking the code
   
 # Disclaimer
 We don't know how to code, if you get hacked, its your fault for not committing.
